@@ -8,6 +8,9 @@
       <div class="text-h2" style="opacity:.4">
         Oops. Nothing here...
       </div>
+        <div class="text-h5" style="opacity:.4">
+        Restorang
+      </div>
 
       <q-btn
         class="q-mt-xl"
