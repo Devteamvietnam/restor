@@ -31,7 +31,8 @@
             <q-item-section avatar v-if="sub.icon != ''">
               <q-icon color="primary" :name="sub.icon" />
             </q-item-section>
-            <q-item-section @click="toMenu(sub.to, sub.name)" :class="{ active: currentMenu == sub.name }">{{ sub.name }}</q-item-section>
+            <q-item-section @click="toMenu(sub.to, sub.name)"
+            :class="{ active: currentMenu == sub.name }">{{ sub.name }}</q-item-section>
           </template>
           <q-list>
             <q-item
@@ -40,7 +41,7 @@
               :key="item.name"
               class="cus-sub-menu"
               :active="link === item.name"
-              @click="link = item.name"
+              @click="link = (item.name, sub.name)"
               active-class="active"
             >
               <q-item-section avatar v-if="item.icon != ''">
@@ -72,7 +73,7 @@
 import { LocalStorage, SessionStorage } from 'quasar'
 
 export default {
-  name: 'MainLayout',
+  name: 'AdminLayout',
   data () {
     return {
       currentMenu: '',
@@ -82,13 +83,6 @@ export default {
     }
   },
   computed: {
-    showAdminBoard () {
-      if (this.currentUser && this.currentUser.roles) {
-        return this.currentUser.roles.includes('ROLE_ADMIN')
-      }
-
-      return false
-    },
     menu () {
       return this.$store.state.Menu.menu
     }

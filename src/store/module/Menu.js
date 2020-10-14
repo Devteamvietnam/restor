@@ -20,14 +20,19 @@ const state = {
       to: '/admin/product'
     },
     {
-      name: 'AR',
-      icon: 'camera',
-      to: '/admin/arproductlist'
+      name: 'AR - Video',
+      icon: 'camera_roll',
+      to: '/admin'
     },
     {
-      name: 'Menu Footer ',
-      icon: 'web',
-      to: '/admin/footer'
+      name: 'AR - Image',
+      icon: 'camera',
+      to: '/admin'
+    },
+    {
+      name: 'AR - Menu',
+      icon: 'menu',
+      to: '/admin'
     }
     ]
   }
