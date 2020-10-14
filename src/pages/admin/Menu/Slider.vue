@@ -125,8 +125,14 @@ export default {
       SliderFilterByTitle: '',
       deleteAllSlider: false,
       current: 1,
-      oldApiSlider: [],
-      apiSlider: []
+      oldApiSlider: [ 
+          {
+            id:"1",
+            title:"name 1",
+            createdatetime:"12-2-2020"
+          },
+        ],
+      apiSlider:[]
     }
   },
   computed: {
@@ -187,6 +193,16 @@ export default {
         })
       }
     }
+  },
+    created() {
+     this.oldApiSlider.forEach(ser => {
+        ser.createdatetime = date.formatDate(
+          new Date(ser.createdatetime),
+          "YYYY-MM-DD HH:mm"
+        );
+         ser = Object.assign({}, ser, { delete: false });
+        this.apiSlider.push(ser);
+      });
   }
 }
 </script>
