@@ -17,22 +17,22 @@ const state = {
     {
       name: 'Product List ',
       icon: 'restaurant',
-      to: '/admin/product'
+      to: '/admin/product-list'
     },
     {
       name: 'AR - Video',
       icon: 'camera_roll',
-      to: '/admin'
+      to: '/admin/ar-video'
     },
     {
       name: 'AR - Image',
       icon: 'camera',
-      to: '/admin'
+      to: '/admin/ar-image'
     },
     {
       name: 'AR - Menu',
       icon: 'menu',
-      to: '/admin'
+      to: '/admin/ar-menu'
     }
     ]
   }
