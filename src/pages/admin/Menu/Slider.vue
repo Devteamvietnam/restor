@@ -10,7 +10,7 @@
       indicator-color="transparent"
       no-caps
     >
-      <q-tab name="slider" label="SLIDER LIST" icon="pages" class="cus-tab">
+      <q-tab name="Services" label="Slider" icon="pages" class="cus-tab">
         <q-icon
           name="fas fa-times"
           size="10px"
@@ -21,14 +21,14 @@
     </q-tabs>
     <!-- <q-separator /> -->
     <q-tab-panels v-model="tab" animated class="cus-tab-section">
-      <q-tab-panel name="slider">
+      <q-tab-panel name="Services">
         <div class="float-right title">
           <p>
-            <b>Slider-List</b>
+            <b>Slider- List</b>
           </p>
         </div>
         <div class="cus-title-table">
-          <q-icon name="pages" />&nbsp;&nbsp;&nbsp;Slider- List
+           <q-icon name="pages" />&nbsp;&nbsp;&nbsp;Slider- List
         </div>
         <div class="cus-container">
           <div class="row flex justify-between res-menu">
@@ -40,16 +40,11 @@
                 class="cus-btn"
                 @click="loadpage()"
               />
-              <q-btn class="cus-btn" text-color="black" icon="add" to="/admin/ar-video/insert" />
-              <q-btn class="cus-btn" text-color="black" icon="delete" @click="deleteSlider()" />
+              <q-btn class="cus-btn" text-color="black" icon="add" to="/admin/slider/insert" />
+              <q-btn class="cus-btn" text-color="black" icon="delete" @click="deleteServices()" />
             </div>
             <div class="row">
-              <q-input class="search" outlined dense v-model="SliderFilterByTitle" placeholder="Title">
-                <template v-slot:append>
-                  <q-icon name="search" />
-                </template>
-              </q-input>
-               <q-input outlined dense v-model="SliderFilterByTitle" placeholder="Category">
+              <q-input outlined dense v-model="ServicesFilterByTitle" placeholder="Slider">
                 <template v-slot:append>
                   <q-icon name="search" />
                 </template>
@@ -58,16 +53,22 @@
           </div>
           <q-item v-ripple class="row text-center text-weight-bold q-pa-none q-mt-lg">
             <q-item-section class="col-1 res-col border ml-0">
-              <q-checkbox size="xs" v-model="deleteAllSlider" class="q-mx-auto" />
+              <q-checkbox size="xs" v-model="deleteAllServices" class="q-mx-auto" />
             </q-item-section>
-            <q-item-section class="col-5 res-update border ml-0">
+            <q-item-section class="col-2 res-update border ml-0">
               <q-item-label class="cursor-pointer">Title</q-item-label>
             </q-item-section>
-            <q-item-section class="col-3 border ml-0">
+             <q-item-section class="col-3 res-update border ml-0">
+              <q-item-label class="cursor-pointer">Content</q-item-label>
+            </q-item-section>
+             <q-item-section class="col-2 res-update border ml-0">
+              <q-item-label class="cursor-pointer">Image</q-item-label>
+            </q-item-section>
+              <q-item-section class="col-2 border ml-0" style="border-right: 1px solid rgba(0, 0, 0, 0.12)">
               <q-item-label class="cursor-pointer">Reg.Date</q-item-label>
             </q-item-section>
             <q-item-section
-              class="col-3 res-update border ml-0"
+              class="col-2 res-update border ml-0"
               style="border-right: 1px solid rgba(0, 0, 0, 0.12)"
             >
               <q-item-label>Update</q-item-label>
@@ -75,24 +76,32 @@
           </q-item>
           <q-list class="bg-white">
             <q-item
-              v-for="sliderList in pagingSlider"
-              :key="sliderList.id"
+              v-for="services in pagingServices"
+              :key="services.id"
               v-ripple
               class="row text-center q-pa-none"
             >
               <q-item-section class="col-1 res-col border-row ml-0">
-                <q-checkbox class="q-mx-auto" size="xs" v-model="sliderList.delete" />
+                <q-checkbox class="q-mx-auto" size="xs" v-model="services.delete" />
               </q-item-section>
               <q-item-section
-                class="col-5 res-update border-row ml-0 text-center q-pl-sm cursor-pointer"
+                class="col-2 res-update border-row ml-0 text-center q-pl-sm cursor-pointer"
               >
-                <q-item-label @click.stop="toSliderDetail(sliderList.id)">{{sliderList.title}}</q-item-label>
+                <q-item-label @click.stop="toServicesDetail(services.id)">{{services.title}}</q-item-label>
               </q-item-section>
-              <q-item-section class="col-3 border-row ml-0">
-                <q-item-label>{{sliderList.createdatetime}}</q-item-label>
+                <q-item-section class="col-3 border-row ml-0 cursor-pointer">
+                <q-item-label @click.stop="toServicesDetail(services.id)">{{services.content}}</q-item-label>
+              </q-item-section>
+              <q-item-section class="col-2 border-row ml-0 cursor-pointer">
+                <q-item-label @click.stop="toServicesDetail(services.id)" style="padding:5px">
+                  <q-img src="https://cdn.quasar.dev/img/mountains.jpg" width="100px" />
+                </q-item-label>
+              </q-item-section>
+               <q-item-section class="col-2 border-row ml-0" style="border-right: 1px solid rgba(0, 0, 0, 0.12)">
+                <q-item-label>{{services.createdatetime}}</q-item-label>
               </q-item-section>
               <q-item-section
-                class="col-3 border-row ml-0"
+                class="col-2 border-row ml-0"
                 style="border-right: 1px solid rgba(0, 0, 0, 0.12);"
               >
                 <q-btn
@@ -100,9 +109,10 @@
                   size="xs"
                   color="primary"
                   label="Update"
-                  :to="'/admin/slider/update/' + sliderList.id"
+                  :to="'/admin/slider/update/' + services.id"
                 />
               </q-item-section>
+
             </q-item>
           </q-list>
           <div class="flex flex-center">
@@ -115,51 +125,75 @@
 </template>
 
 <script>
-// eslint-disable-next-line no-unused-vars
+// import {
+//   loadAllServices,
+//   deleteServices
+// } from "src/service/servi/serviceslist";
 import { date } from 'quasar'
 export default {
-  name: 'AdminSliderPage',
+  name: 'AdminServicesPage',
   data () {
     return {
-      tab: 'slider',
-      SliderFilterByTitle: '',
-      deleteAllSlider: false,
+      tab: 'Services',
+      ServicesFilterByTitle: '',
+      deleteAllServices: false,
       current: 1,
-      oldApiSlider: [
+      oldApiServicesList: [
         {
           id: '1',
-          title: 'name 1',
-          createdatetime: '12-2-2020'
+          title: 'Background image 1',
+          content: 'content 1 content 1 content 1 content 1 content 1 content 1 ',
+          createdatetime: '2-2-2012'
+        },
+        {
+          id: '2',
+          title: 'Background image 2',
+          content: 'content 2 content 2 content 2 content 2 content 2 content 2 ',
+          createdatetime: '2-2-2012'
+        },
+        {
+          id: '3',
+          title: 'Background image 3',
+          content: 'content 3 content 3 content 3 content 3 content 3 content 3 ',
+          createdatetime: '2-2-2012'
         }
       ],
-      apiSlider: []
+      apiServicesList: [
+      ]
     }
   },
   computed: {
-    SliderList () {
-      return this.apiSlider.filter(Slider => {
-        return Slider.title
+    ServicesList () {
+      return this.apiServicesList.filter(services => {
+        return services.title
           .toLowerCase()
-          .match(this.SliderFilterByTitle.toLowerCase())
+          .match(this.ServicesFilterByTitle.toLowerCase())
       })
     },
-    maxPage () {
-      return Math.ceil(this.apiSlider.length / 5)
+    deleteBlogList () {
+      const list = []
+      for (let i = 0; i < this.apiServicesList.length; i++) {
+        list.push({ id: this.apiServicesList[i].id, chosen: false })
+      }
+      return list
     },
-    pagingSlider () {
+    maxPage () {
+      return Math.ceil(this.ServicesList.length / 5)
+    },
+    pagingServices () {
       var startIndex = (this.current - 1) * 5
       var endIndex = this.current * 5 - 1
-      return this.apiSlider.slice(startIndex, endIndex + 1)
+      return this.ServicesList.slice(startIndex, endIndex + 1)
     }
   },
   methods: {
     closeTab () {
-      this.$router.push('/admin')
+      this.$router.push('/tpm')
     },
-    toSliderDetail (sliderId) {
+    toServicesDetail (sliderId) {
       this.$router.push('/admin/slider/detail/' + sliderId)
     },
-    deleteSlider () {
+    deleteServices () {
       this.$q
         .dialog({
           title: 'Warning',
@@ -169,11 +203,16 @@ export default {
         })
         .onOk(() => {
           const deleteList = []
-          this.apiSlider.forEach(sliderList => {
-            if (sliderList.delete === true) {
-              deleteList.push(sliderList.id)
+          this.apiServicesList.forEach(services => {
+            if (services.delete === true) {
+              deleteList.push(services.id)
             }
           })
+          deleteList.forEach((element, index) => {
+            // eslint-disable-next-line no-undef
+            deleteServices(deleteList[index])
+          })
+
           location.reload()
         })
     },
@@ -182,26 +221,37 @@ export default {
     }
   },
   watch: {
-    deleteAllSlider: function (val) {
+    deleteAllServices: function (val) {
       if (val === true) {
-        this.apiArimageList.forEach(sliderList => {
-          sliderList.delete = true
+        this.apiServicesList.forEach(services => {
+          services.delete = true
         })
       } else {
-        this.apiArimageList.forEach(sliderList => {
-          sliderList.delete = false
+        this.apiServicesList.forEach(services => {
+          services.delete = false
         })
       }
     }
   },
   created () {
-    this.oldApiSlider.forEach(ser => {
+    // loadAllServices().then(response => {
+    //   this.oldApiServicesList = response.data;
+    //   this.oldApiServicesList.forEach(ser => {
+    //     ser.createdatetime = date.formatDate(
+    //       new Date(ser.createdatetime),
+    //       "YYYY-MM-DD HH:mm"
+    //     );
+    //     ser = Object.assign({}, ser, { delete: false });
+    //     this.apiServicesList.push(ser);
+    //   });
+    // });apiServicesList
+    this.oldApiServicesList.forEach(ser => {
       ser.createdatetime = date.formatDate(
         new Date(ser.createdatetime),
         'YYYY-MM-DD HH:mm'
       )
       ser = Object.assign({}, ser, { delete: false })
-      this.apiSlider.push(ser)
+      this.apiServicesList.push(ser)
     })
   }
 }
@@ -264,9 +314,6 @@ export default {
   min-width: 34px;
   margin: 0 auto;
   width: 50%;
-}
-.search {
-  margin-right: 10px;
 }
 @media only screen and (max-width: 700px) {
   .res-col {
