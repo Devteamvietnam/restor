@@ -40,15 +40,10 @@
                 class="cus-btn"
                 @click="loadpage()"
               />
-              <q-btn class="cus-btn" text-color="black" icon="add" to="/admin/ar-video/insert" />
+              <q-btn class="cus-btn" text-color="black" icon="add" to="/admin/product-list/insert" />
               <q-btn class="cus-btn" text-color="black" icon="delete" @click="deleteProductList()" />
             </div>
             <div class="row">
-              <q-input class="search" outlined dense v-model="ProductListFilterByTitle" placeholder="Title">
-                <template v-slot:append>
-                  <q-icon name="search" />
-                </template>
-              </q-input>
                <q-input outlined dense v-model="ProductListFilterByTitle" placeholder="Category">
                 <template v-slot:append>
                   <q-icon name="search" />
@@ -87,15 +82,18 @@
                 <q-checkbox class="q-mx-auto" size="xs" v-model="productlist.delete" />
               </q-item-section>
               <q-item-section
-                class="col-5 res-update border-row ml-0 text-center q-pl-sm cursor-pointer"
+                class="col-4 res-update border-row ml-0 text-center q-pl-sm cursor-pointer"
               >
                 <q-item-label @click.stop="toProductListDetail(productlist.id)">{{productlist.title}}</q-item-label>
+              </q-item-section>
+               <q-item-section class="col-2 border-row ml-0">
+                <q-item-label>{{productlist.category}}</q-item-label>
               </q-item-section>
               <q-item-section class="col-3 border-row ml-0">
                 <q-item-label>{{productlist.createdatetime}}</q-item-label>
               </q-item-section>
               <q-item-section
-                class="col-3 border-row ml-0"
+                class="col-2 border-row ml-0"
                 style="border-right: 1px solid rgba(0, 0, 0, 0.12);"
               >
                 <q-btn
@@ -128,14 +126,31 @@ export default {
       ProductListFilterByTitle: '',
       deleteAllProductList: false,
       current: 1,
-      oldApiProductList: [],
+      oldApiProductList: [
+        {
+          id: '1',
+          title: 'Food 1',
+          category: 'Drink',
+          content: 'this is content',
+          price: '100',
+          createdatetime: '2020-10-15'
+        },
+        {
+          id: '2',
+          title: 'Food 2',
+          category: 'Meet',
+          content: 'this is content',
+          price: '100',
+          createdatetime: '2020-10-15'
+        }
+      ],
       apiProductList: []
     }
   },
   computed: {
     ProductList () {
       return this.apiProductList.filter(ProductList => {
-        return ProductList.title
+        return ProductList.category
           .toLowerCase()
           .match(this.ProductListFilterByTitle.toLowerCase())
       })
@@ -190,6 +205,27 @@ export default {
         })
       }
     }
+  },
+  created () {
+    // loadAllServices().then(response => {
+    //   this.oldApiServicesList = response.data;
+    //   this.oldApiServicesList.forEach(ser => {
+    //     ser.createdatetime = date.formatDate(
+    //       new Date(ser.createdatetime),
+    //       "YYYY-MM-DD HH:mm"
+    //     );
+    //     ser = Object.assign({}, ser, { delete: false });
+    //     this.apiServicesList.push(ser);
+    //   });
+    // });apiServicesList
+    this.oldApiProductList.forEach(ser => {
+      ser.createdatetime = date.formatDate(
+        new Date(ser.createdatetime),
+        'YYYY-MM-DD HH:mm'
+      )
+      ser = Object.assign({}, ser, { delete: false })
+      this.apiProductList.push(ser)
+    })
   }
 }
 </script>
