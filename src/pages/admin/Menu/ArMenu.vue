@@ -120,7 +120,24 @@ export default {
       ArmenuFilterByTitle: '',
       deleteAllArmenuList: false,
       current: 1,
-      oldApiArmenuListList: [],
+      oldApiArmenuList: [
+        {
+          id: '1',
+          title: 'Food 1',
+          category: 'Drink',
+          content: 'this is content',
+          price: '100',
+          createdatetime: '2020-10-16'
+        },
+        {
+          id: '2',
+          title: 'Food 2',
+          category: 'Meet',
+          content: 'this is content',
+          price: '100',
+          createdatetime: '2020-10-16'
+        }
+      ],
       apiArmenuList: []
     }
   },
@@ -182,6 +199,16 @@ export default {
         })
       }
     }
+  },
+  created () {
+    this.oldApiArmenuList.forEach(ser => {
+      ser.createdatetime = date.formatDate(
+        new Date(ser.createdatetime),
+        'YYYY-MM-DD HH:mm'
+      )
+      ser = Object.assign({}, ser, { delete: false })
+      this.apiArmenuList.push(ser)
+    })
   }
 }
 </script>

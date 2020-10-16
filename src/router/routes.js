@@ -21,7 +21,10 @@ const routes = [
       { path: 'ar-image/insert', component: () => import('pages/admin/Menu/ArImageInsert.vue') },
       { path: 'ar-image/detail/:arimageId', component: () => import('pages/admin/Menu/ArImageDetail.vue') },
       { path: 'ar-image/update/:arimageId', component: () => import('pages/admin/Menu/ArImageUpdate.vue') },
-      { path: 'ar-menu', component: () => import('pages/admin/Menu/ArMenu.vue') }
+      { path: 'ar-menu', component: () => import('pages/admin/Menu/ArMenu.vue') },
+      { path: 'ar-menu/insert', component: () => import('pages/admin/Menu/ArMenuInsert.vue') },
+      { path: 'ar-menu/detail/:armenuId', component: () => import('pages/admin/Menu/ArMenuDetail.vue') },
+      { path: 'ar-menu/update/:armenuId', component: () => import('pages/admin/Menu/ArMenuUpdate.vue') }
     ]
   }
 ]
