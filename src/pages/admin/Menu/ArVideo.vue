@@ -56,7 +56,7 @@
               <q-checkbox size="xs" v-model="deleteAllArvideoList" class="q-mx-auto" />
             </q-item-section>
             <q-item-section class="col-5 res-update border ml-0">
-              <q-item-label class="cursor-pointer">Arvideo</q-item-label>
+              <q-item-label class="cursor-pointer">Title</q-item-label>
             </q-item-section>
             <q-item-section class="col-3 border ml-0">
               <q-item-label class="cursor-pointer">Reg.Date</q-item-label>
@@ -120,7 +120,22 @@ export default {
       ArvideoFilterByTitle: '',
       deleteAllArvideoList: false,
       current: 1,
-      oldApiArvideoList: [],
+      oldApiArvideoList: [
+        {
+          id: '1',
+          title: 'Video demo 1',
+          link: 'http://youtube.com/',
+          content: 'Video demo 1',
+          createdatetime: '2020-10-16'
+        },
+        {
+          id: '2',
+          title: 'Video demo 2',
+          link: 'http://youtube.com/',
+          content: 'Video demo 2',
+          createdatetime: '2020-10-16'
+        }
+      ],
       apiArvideoList: []
     }
   },
@@ -182,6 +197,27 @@ export default {
         })
       }
     }
+  },
+  created () {
+    // loadAllArVideo().then(response => {
+    //   this.oldApiArvideoList = response.data;
+    //   this.oldApiArvideoList.forEach(ser => {
+    //     ser.createdatetime = date.formatDate(
+    //       new Date(ser.createdatetime),
+    //       "YYYY-MM-DD HH:mm"
+    //     );
+    //     ser = Object.assign({}, ser, { delete: false });
+    //     this.apiArvideoList.push(ser);
+    //   });
+    // });apiServicesList
+    this.oldApiArvideoList.forEach(ser => {
+      ser.createdatetime = date.formatDate(
+        new Date(ser.createdatetime),
+        'YYYY-MM-DD HH:mm'
+      )
+      ser = Object.assign({}, ser, { delete: false })
+      this.apiArvideoList.push(ser)
+    })
   }
 }
 </script>
