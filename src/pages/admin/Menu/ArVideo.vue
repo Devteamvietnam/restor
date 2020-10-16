@@ -199,17 +199,6 @@ export default {
     }
   },
   created () {
-    // loadAllArVideo().then(response => {
-    //   this.oldApiArvideoList = response.data;
-    //   this.oldApiArvideoList.forEach(ser => {
-    //     ser.createdatetime = date.formatDate(
-    //       new Date(ser.createdatetime),
-    //       "YYYY-MM-DD HH:mm"
-    //     );
-    //     ser = Object.assign({}, ser, { delete: false });
-    //     this.apiArvideoList.push(ser);
-    //   });
-    // });apiServicesList
     this.oldApiArvideoList.forEach(ser => {
       ser.createdatetime = date.formatDate(
         new Date(ser.createdatetime),

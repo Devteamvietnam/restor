@@ -18,6 +18,9 @@ const routes = [
       { path: 'ar-video/detail/:arvideoId', component: () => import('pages/admin/Menu/ArVideoDetail.vue') },
       { path: 'ar-video/update/:arvideoId', component: () => import('pages/admin/Menu/ArVideoUpdate.vue') },
       { path: 'ar-image', component: () => import('pages/admin/Menu/ArImage.vue') },
+      { path: 'ar-image/insert', component: () => import('pages/admin/Menu/ArImageInsert.vue') },
+      { path: 'ar-image/detail/:arimageId', component: () => import('pages/admin/Menu/ArImageDetail.vue') },
+      { path: 'ar-image/update/:arimageId', component: () => import('pages/admin/Menu/ArImageUpdate.vue') },
       { path: 'ar-menu', component: () => import('pages/admin/Menu/ArMenu.vue') }
     ]
   }

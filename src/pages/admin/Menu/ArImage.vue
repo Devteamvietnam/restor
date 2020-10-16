@@ -120,7 +120,26 @@ export default {
       ArimageFilterByTitle: '',
       deleteAllArimageList: false,
       current: 1,
-      oldApiArimageListList: [],
+      oldApiArimageList: [
+        {
+          id: '1',
+          title: 'Food 1',
+          content: 'content',
+          createdatetime: '2020-10-16'
+        },
+        {
+          id: '2',
+          title: 'Food 2',
+          content: 'content 2',
+          createdatetime: '2020-10-16'
+        },
+        {
+          id: '3',
+          title: 'Food 3',
+          content: 'content 3',
+          createdatetime: '2020-10-16'
+        }
+      ],
       apiArimageList: []
     }
   },
@@ -171,7 +190,7 @@ export default {
     }
   },
   watch: {
-    deleteAllArimage: function (val) {
+    deleteAllArimageList: function (val) {
       if (val === true) {
         this.apiArimageList.forEach(arimage => {
           arimage.delete = true
@@ -182,6 +201,16 @@ export default {
         })
       }
     }
+  },
+  created () {
+    this.oldApiArimageList.forEach(ser => {
+      ser.createdatetime = date.formatDate(
+        new Date(ser.createdatetime),
+        'YYYY-MM-DD HH:mm'
+      )
+      ser = Object.assign({}, ser, { delete: false })
+      this.apiArimageList.push(ser)
+    })
   }
 }
 </script>
