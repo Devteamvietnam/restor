@@ -138,7 +138,7 @@ export default {
       ServicesFilterByTitle: '',
       deleteAllServices: false,
       current: 1,
-      oldApiServicesList: [
+      oldApiSliderList: [
         {
           id: '1',
           title: 'Background image 1',
@@ -158,22 +158,22 @@ export default {
           createdatetime: '2-2-2012'
         }
       ],
-      apiServicesList: [
+      apiSliderList: [
       ]
     }
   },
   computed: {
     ServicesList () {
-      return this.apiServicesList.filter(services => {
-        return services.title
+      return this.apiSliderList.filter(slider => {
+        return slider.title
           .toLowerCase()
           .match(this.ServicesFilterByTitle.toLowerCase())
       })
     },
     deleteBlogList () {
       const list = []
-      for (let i = 0; i < this.apiServicesList.length; i++) {
-        list.push({ id: this.apiServicesList[i].id, chosen: false })
+      for (let i = 0; i < this.apiSliderList.length; i++) {
+        list.push({ id: this.apiSliderList[i].id, chosen: false })
       }
       return list
     },
@@ -203,9 +203,9 @@ export default {
         })
         .onOk(() => {
           const deleteList = []
-          this.apiServicesList.forEach(services => {
-            if (services.delete === true) {
-              deleteList.push(services.id)
+          this.apiSliderList.forEach(slider => {
+            if (slider.delete === true) {
+              deleteList.push(slider.id)
             }
           })
           deleteList.forEach((element, index) => {
@@ -223,12 +223,12 @@ export default {
   watch: {
     deleteAllServices: function (val) {
       if (val === true) {
-        this.apiServicesList.forEach(services => {
-          services.delete = true
+        this.apiSliderList.forEach(slider => {
+          slider.delete = true
         })
       } else {
-        this.apiServicesList.forEach(services => {
-          services.delete = false
+        this.apiSliderList.forEach(slider => {
+          slider.delete = false
         })
       }
     }
@@ -245,13 +245,13 @@ export default {
     //     this.apiServicesList.push(ser);
     //   });
     // });apiServicesList
-    this.oldApiServicesList.forEach(ser => {
+    this.oldApiSliderList.forEach(ser => {
       ser.createdatetime = date.formatDate(
         new Date(ser.createdatetime),
         'YYYY-MM-DD HH:mm'
       )
       ser = Object.assign({}, ser, { delete: false })
-      this.apiServicesList.push(ser)
+      this.apiSliderList.push(ser)
     })
   }
 }
