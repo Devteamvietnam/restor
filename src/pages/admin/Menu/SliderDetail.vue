@@ -42,7 +42,7 @@
               </div>
               <div class="col-xs-9 col-sm-9 col-md-9">
                 <p style="margin-top:20px;margin-left:30px;">
-                  <i>{{ourskill.title}}</i>
+                  <i>{{slider.title}}</i>
                 </p>
               </div>
               <!----gerenal-Introduction--->
@@ -52,7 +52,7 @@
                 </p>
               </div>
               <div class="col-xs-9 col-sm-9 col-md-9">
-                <q-item-label v-html="ourskill.content" style="margin:0px 30px;" />
+                <q-item-label v-html="slider.content" style="margin:0px 30px;" />
               </div>
               <!-----image--->
               <div class="col-xs-3 col-sm-3 col-md-3">
@@ -105,7 +105,7 @@
                   color="white"
                   text-color="primary"
                   label="Update"
-                  :to="'/admin/slider/update/' + ourskill.id"
+                  :to="'/admin/slider/update/' + slider.id"
                   style="margin-right: 5px;"
                 />
                 <q-btn
@@ -146,8 +146,8 @@ export default {
       searchkey: '',
       current: 1,
       maxPage: 5,
-      ourskill: {},
-      ourskillist: [
+      slider: {},
+      sliderlist: [
         {
           id: '1',
           title: 'Background image 1',
@@ -189,7 +189,7 @@ export default {
         })
         .onOk(() => {
           // eslint-disable-next-line no-undef
-          deleteServicesOurSkill(this.$route.params.ourskillId).then(response =>
+          deleteServicesOurSkill(this.$route.params.sliderId).then(response =>
             alert('delete surcess')
           )
           this.apipercent.forEach((element, index) => {
@@ -198,7 +198,7 @@ export default {
               alert('delete surcess')
             )
           })
-          location.reload(this.$router.push('/tpm/services/ourskill'))
+          location.reload(this.$router.push('/admin/slider'))
         })
     }
   },
@@ -217,9 +217,9 @@ export default {
     //     }
     //   }
     // });
-    for (let i = 0; i < this.ourskillist.length; i++) {
-      if (this.$route.params.sliderId === this.ourskillist[i].id) {
-        this.ourskill = this.ourskillist[i]
+    for (let i = 0; i < this.sliderlist.length; i++) {
+      if (this.$route.params.sliderId === this.sliderlist[i].id) {
+        this.slider = this.sliderlist[i]
         break
       }
     }

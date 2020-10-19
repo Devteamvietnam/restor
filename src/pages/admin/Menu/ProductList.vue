@@ -10,7 +10,12 @@
       indicator-color="transparent"
       no-caps
     >
-      <q-tab name="productlist" label="PRODUCT LIST" icon="restaurant" class="cus-tab">
+      <q-tab
+        name="productlist"
+        label="PRODUCT LIST"
+        icon="restaurant"
+        class="cus-tab"
+      >
         <q-icon
           name="fas fa-times"
           size="10px"
@@ -40,20 +45,42 @@
                 class="cus-btn"
                 @click="loadpage()"
               />
-              <q-btn class="cus-btn" text-color="black" icon="add" to="/admin/product-list/insert" />
-              <q-btn class="cus-btn" text-color="black" icon="delete" @click="deleteProductList()" />
+              <q-btn
+                class="cus-btn"
+                text-color="black"
+                icon="add"
+                to="/admin/product-list/insert"
+              />
+              <q-btn
+                class="cus-btn"
+                text-color="black"
+                icon="delete"
+                @click="deleteProductList()"
+              />
             </div>
             <div class="row">
-               <q-input outlined dense v-model="ProductListFilterByTitle" placeholder="Category">
+              <q-input
+                outlined
+                dense
+                v-model="ProductListFilterByTitle"
+                placeholder="Category"
+              >
                 <template v-slot:append>
                   <q-icon name="search" />
                 </template>
               </q-input>
             </div>
           </div>
-          <q-item v-ripple class="row text-center text-weight-bold q-pa-none q-mt-lg">
+          <q-item
+            v-ripple
+            class="row text-center text-weight-bold q-pa-none q-mt-lg"
+          >
             <q-item-section class="col-1 res-col border ml-0">
-              <q-checkbox size="xs" v-model="deleteAllProductList" class="q-mx-auto" />
+              <q-checkbox
+                size="xs"
+                v-model="deleteAllProductList"
+                class="q-mx-auto"
+              />
             </q-item-section>
             <q-item-section class="col-4 res-update border ml-0">
               <q-item-label class="cursor-pointer">Title</q-item-label>
@@ -79,22 +106,29 @@
               class="row text-center q-pa-none"
             >
               <q-item-section class="col-1 res-col border-row ml-0">
-                <q-checkbox class="q-mx-auto" size="xs" v-model="productlist.delete" />
+                <q-checkbox
+                  class="q-mx-auto"
+                  size="xs"
+                  v-model="productlist.delete"
+                />
               </q-item-section>
               <q-item-section
                 class="col-4 res-update border-row ml-0 text-center q-pl-sm cursor-pointer"
               >
-                <q-item-label @click.stop="toProductListDetail(productlist.id)">{{productlist.title}}</q-item-label>
+                <q-item-label
+                  @click.stop="toProductListDetail(productlist.id)"
+                  >{{ productlist.title }}</q-item-label
+                >
               </q-item-section>
-               <q-item-section class="col-2 border-row ml-0">
-                <q-item-label>{{productlist.category}}</q-item-label>
+              <q-item-section class="col-2 border-row ml-0">
+                <q-item-label>{{ productlist.category }}</q-item-label>
               </q-item-section>
               <q-item-section class="col-3 border-row ml-0">
-                <q-item-label>{{productlist.createdatetime}}</q-item-label>
+                <q-item-label>{{ productlist.createdatetime }}</q-item-label>
               </q-item-section>
               <q-item-section
                 class="col-2 border-row ml-0"
-                style="border-right: 1px solid rgba(0, 0, 0, 0.12);"
+                style="border-right: 1px solid rgba(0, 0, 0, 0.12)"
               >
                 <q-btn
                   class="cus-btn-update"
@@ -107,7 +141,12 @@
             </q-item>
           </q-list>
           <div class="flex flex-center">
-            <q-pagination size="xs" v-model="current" :max="maxPage" :input="true"></q-pagination>
+            <q-pagination
+              size="xs"
+              v-model="current"
+              :max="maxPage"
+              :input="true"
+            ></q-pagination>
           </div>
         </div>
       </q-tab-panel>
@@ -117,96 +156,97 @@
 
 <script>
 // eslint-disable-next-line no-unused-vars
-import { date } from 'quasar'
+import { date } from "quasar";
 export default {
-  name: 'AdminProductListPage',
-  data () {
+  name: "AdminProductListPage",
+  data() {
     return {
-      tab: 'productlist',
-      ProductListFilterByTitle: '',
+      tab: "productlist",
+      ProductListFilterByTitle: "",
       deleteAllProductList: false,
       current: 1,
       oldApiProductList: [
         {
-          id: '1',
-          title: 'Food 1',
-          category: 'Drink',
-          content: 'this is content',
-          price: '100',
-          createdatetime: '2020-10-15'
+          id: "1",
+          title: "Food 1",
+          category: "Drink",
+          content: "this is content",
+          price: "100",
+          createdatetime: "2020-10-15",
         },
         {
-          id: '2',
-          title: 'Food 2',
-          category: 'Meet',
-          content: 'this is content',
-          price: '100',
-          createdatetime: '2020-10-15'
-        }
+          id: "2",
+          title: "Food 2",
+          category: "Meet",
+          content: "this is content",
+          price: "100",
+          createdatetime: "2020-10-15",
+        },
       ],
-      apiProductList: []
-    }
+      apiProductList: [],
+    };
   },
   computed: {
-    ProductList () {
-      return this.apiProductList.filter(ProductList => {
-        return ProductList.category
-          .toLowerCase()
-          .match(this.ProductListFilterByTitle.toLowerCase())
-      })
+    ProductList() {
+      return this.apiProductList.filter((ProductList) => {
+        return (
+          ProductList.category.toLowerCase().match(this.ProductListFilterByTitle.toLowerCase()) ||
+          ProductList.title.toLowerCase().match(this.ProductListFilterByTitle.toLowerCase())
+        );
+      });
     },
-    maxPage () {
-      return Math.ceil(this.apiProductList.length / 5)
+    maxPage() {
+      return Math.ceil(this.apiProductList.length / 5);
     },
-    pagingProductList () {
-      var startIndex = (this.current - 1) * 5
-      var endIndex = this.current * 5 - 1
-      return this.apiProductList.slice(startIndex, endIndex + 1)
-    }
+    pagingProductList() {
+      var startIndex = (this.current - 1) * 5;
+      var endIndex = this.current * 5 - 1;
+      return this.ProductList.slice(startIndex, endIndex + 1);
+    },
   },
   methods: {
-    closeTab () {
-      this.$router.push('/admin')
+    closeTab() {
+      this.$router.push("/admin");
     },
-    toProductListDetail (productlistId) {
-      this.$router.push('/admin/product-list/detail/' + productlistId)
+    toProductListDetail(productlistId) {
+      this.$router.push("/admin/product-list/detail/" + productlistId);
     },
-    deleteProductList () {
+    deleteProductList() {
       this.$q
         .dialog({
-          title: 'Warning',
-          message: 'Do you really want to  Delete?',
+          title: "Warning",
+          message: "Do you really want to  Delete?",
           persistent: true,
-          cancel: true
+          cancel: true,
         })
         .onOk(() => {
-          const deleteList = []
-          this.apiProductList.forEach(productlist => {
+          const deleteList = [];
+          this.apiProductList.forEach((productlist) => {
             if (productlist.delete === true) {
-              deleteList.push(productlist.id)
+              deleteList.push(productlist.id);
             }
-          })
-          location.reload()
-        })
+          });
+          location.reload();
+        });
     },
-    loadpage () {
-      location.reload()
-    }
+    loadpage() {
+      location.reload();
+    },
   },
   watch: {
     deleteAllProductList: function (val) {
       if (val === true) {
-        this.apiArimageList.forEach(productlist => {
-          productlist.delete = true
-        })
+        this.apiArimageList.forEach((productlist) => {
+          productlist.delete = true;
+        });
       } else {
-        this.apiArimageList.forEach(productlist => {
-          productlist.delete = false
-        })
+        this.apiArimageList.forEach((productlist) => {
+          productlist.delete = false;
+        });
       }
-    }
+    },
   },
-  created () {
+  created() {
     // loadAllServices().then(response => {
     //   this.oldApiServicesList = response.data;
     //   this.oldApiServicesList.forEach(ser => {
@@ -218,16 +258,16 @@ export default {
     //     this.apiServicesList.push(ser);
     //   });
     // });apiServicesList
-    this.oldApiProductList.forEach(ser => {
+    this.oldApiProductList.forEach((ser) => {
       ser.createdatetime = date.formatDate(
         new Date(ser.createdatetime),
-        'YYYY-MM-DD HH:mm'
-      )
-      ser = Object.assign({}, ser, { delete: false })
-      this.apiProductList.push(ser)
-    })
-  }
-}
+        "YYYY-MM-DD HH:mm"
+      );
+      ser = Object.assign({}, ser, { delete: false });
+      this.apiProductList.push(ser);
+    });
+  },
+};
 </script>
 
 <style scoped>
