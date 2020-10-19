@@ -189,7 +189,8 @@ import {
   loadAllSlider,updateSlider
 } from "src/services/menu/slider";
 // eslint-disable-next-line no-unused-vars
-import { format } from 'quasar'
+import { format } from 'quasar';
+import { date } from "quasar";
 export default {
   name: 'AdminServicesPage',
   data () {
@@ -216,8 +217,6 @@ export default {
       ],
       objslider: {
       },
-      apipercent: [],
-      idupdatepercent: [],
       baseUrl: 'http://localhost:8080'
     }
   },
@@ -241,13 +240,10 @@ export default {
     slider () {
       return this.objslider
     }
-    // percent() {
-    //   return this.apipercent;
-    // }
   },
   methods: {
     closeTab () {
-      this.$router.push('/admin')
+      this.$router.push('/rem')
     },
     deleimgae () {
       this.showPreview = false
@@ -278,15 +274,27 @@ export default {
     onSubmit () {
       // update ourskill
       const formData = new FormData()
+      this.objslider.createdatetime = date.formatDate(
+        new Date(),
+        "YYYY-MM-DDThh:mm:ss"
+      );
       formData.append('data', JSON.stringify(this.objslider))
       formData.append('file', this.uploadPic)
       // eslint-disable-next-line no-undef
       updateSlider(
         this.$route.params.sliderId,
         formData
-      ).then(response => alert('update surcess'))
-      location.reload()
-      this.dirty = true
+      ).then(response => {
+          this.$q.notify({
+        color: "green-4",
+        textColor: "white",
+        icon: "done",
+        timeout: 2000,
+        message: "update  Successfully",
+       
+      });
+       this.dirty = true
+      })
     },
     deletepercenr (index) {
       this.$q
