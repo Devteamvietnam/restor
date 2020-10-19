@@ -2,37 +2,37 @@ const state = {
   menu: [{
     name: 'Home',
     icon: 'home',
-    to: '/admin/home',
+    to: '/rem/home',
     subMenu: []
   },
   {
     name: 'Menu',
     icon: 'menu',
-    to: '/admin',
+    to: '/rem',
     subMenu: [{
       name: 'Slider',
       icon: 'pages',
-      to: '/admin/slider'
+      to: '/rem/slider'
     },
     {
       name: 'Product List ',
       icon: 'restaurant',
-      to: '/admin/product-list'
+      to: '/rem/product-list'
     },
     {
       name: 'AR - Video',
       icon: 'camera_roll',
-      to: '/admin/ar-video'
+      to: '/rem/ar-video'
     },
     {
       name: 'AR - Image',
       icon: 'camera',
-      to: '/admin/ar-image'
+      to: '/rem/ar-image'
     },
     {
       name: 'AR - Menu',
       icon: 'menu',
-      to: '/admin/ar-menu'
+      to: '/rem/ar-menu'
     }
     ]
   }

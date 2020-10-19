@@ -1,10 +1,17 @@
 
 const routes = [
   {
-    path: '/admin',
+    path: '/login',
+    component: () => import('pages/admin/Login.vue')
+  },
+  {
+    path: '/res/register',
+    component: () => import('pages/admin/Register.vue')
+  },
+  {
+    path: '/rem',
     component: () => import('layouts/AdminLayout.vue'),
     children: [
-      { path: 'admin', component: () => import('pages/admin/Index.vue') },
       { path: 'slider', component: () => import('pages/admin/Menu/Slider.vue') },
       { path: 'slider/insert', component: () => import('pages/admin/Menu/SliderInsert') },
       { path: 'slider/detail/:sliderId', component: () => import('pages/admin/Menu/SliderDetail') },

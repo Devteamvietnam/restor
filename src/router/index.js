@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-
+import { LocalStorage } from 'quasar'
 import routes from './routes'
 
 Vue.use(VueRouter)
@@ -25,6 +25,20 @@ export default function (/* { store, ssrContext } */) {
     mode: process.env.VUE_ROUTER_MODE,
     base: process.env.VUE_ROUTER_BASE
   })
-
+  // redirect /login
+  Router.beforeEach((to, from, next) => {
+    const user = LocalStorage.getItem('user')
+    if (user === null) {
+      if (to.path.search(/rem/) !== -1) {
+        next({
+          path: '/login'
+        })
+      } else {
+        next()
+      }
+    } else {
+      next()
+    }
+  })
   return Router
 }
