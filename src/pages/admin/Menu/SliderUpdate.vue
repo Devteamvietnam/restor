@@ -1,5 +1,5 @@
 <template>
-  <div class="cus-layout">
+  <div v-if="Object.entries(slider).length > 0" class="cus-layout">
     <q-tabs
       v-model="tab"
       dense
@@ -42,7 +42,7 @@
                   class="col-sm-10 col-12"
                   outlined
                   dense
-                  v-model="ourskill.title"
+                  v-model="slider.title"
                   lazy-rules
                   placeholder="Our Skill"
                   :rules="[ val =>  val !== null && val !== '' || 'Please type a name']"
@@ -51,7 +51,7 @@
                 <p class="col-sm-2 col-12 cus-text">Content</p>
                 <q-editor
                   class="col-sm-10 col-12"
-                  v-model="ourskill.content"
+                  v-model="slider.content"
                   placeholder="Enter Introduction"
                   :toolbar="[
                   [
@@ -109,19 +109,19 @@
                       <q-item-section>
                         <q-item>
                           <q-item-section top>
-                            <!-- <div v-if="!showPreview" class="text-grey-8 q-gutter-xs">
+                            <div v-if="!showPreview" class="text-grey-8 q-gutter-xs">
                               <q-img
-                                :src="baseUrl + '/api/v1/blog/view' + ourskill.img.fileType.split('/').pop().toUpperCase() + '/' + ourskill.img.id"
-                                style="height: auto; max-width: 100px"
+                                :src="baseUrl + '/api/v1/menu/view' + slider.img.fileType.split('/').pop().toUpperCase() + '/' + slider.img.id"
+                                style="height: auto; max-width: 100%"
                               />
                               <br />
                               <input type="file" accept="image/*" @change="uploadImage($event)" />
-                            </div> -->
-                            <div  class="text-grey-8 q-gutter-xs">
+                            </div>
+                            <div v-if="showPreview"  class="text-grey-8 q-gutter-xs">
                               <q-img
                                 :src="imagePreview"
                                 spinner-color="white"
-                                style="height: auto; max-width: 200px"
+                                style="height: auto; max-width: 100%"
                               />
                               <br />
                               <br />
@@ -140,6 +140,21 @@
             <div class="text-right" style="margin:20px; width: 75%;">
               <q-btn
                 class="my-custom-toggle"
+                v-if="dirty == true"
+                disable
+                spread
+                no-caps
+                unelevated
+                toggle-color="primary"
+                color="white"
+                text-color="primary"
+                label="Update"
+                type="submit"
+                style="margin-right: 5px;"
+              />
+               <q-btn
+                class="my-custom-toggle"
+                v-else
                 spread
                 no-caps
                 unelevated
@@ -159,7 +174,7 @@
                 color="white"
                 text-color="primary"
                 label="Canel"
-                @click="cancelCreateServicesOurSkill()"
+                @click="cancelCreateSlider()"
               />
             </div>
           </q-form>
@@ -170,15 +185,12 @@
 </template>
 
 <script>
-// import {
-//   loadAllOurSkill,
-//   loadAllPercent,
-//   updateServicesOurSkill,
-//   updateServicesPercent,
-//   deleteServicesPercent
-// } from "src/service/servi/serviceslist";
+import {
+  loadAllSlider,updateSlider
+} from "src/services/menu/slider";
 // eslint-disable-next-line no-unused-vars
-import { format } from 'quasar'
+import { format } from 'quasar';
+import { date } from "quasar";
 export default {
   name: 'AdminServicesPage',
   data () {
@@ -197,70 +209,41 @@ export default {
       uploadPic: null,
       deleteimage: false,
       dirty: true,
-      chekUpdateSubmitOurSkill: {
-        ourskill: '',
-        generalintroduction: '',
+      chekUpdateSubmitSlider: {
         title: '',
-        shortintroduction: ''
+        content: '',
       },
-      chekUpdateSubmitPercent: [],
-      ourskillist: [
-        {
-          id: '1',
-          title: 'Background image 1',
-          content: 'content 1 content 1 content 1 content 1 content 1 content 1 ',
-          createdatetime: '2-2-2012'
-        },
-        {
-          id: '2',
-          title: 'Background image 2',
-          content: 'content 2 content 2 content 2 content 2 content 2 content 2 ',
-          createdatetime: '2-2-2012'
-        },
-        {
-          id: '3',
-          title: 'Background image 3',
-          content: 'content 3 content 3 content 3 content 3 content 3 content 3 ',
-          createdatetime: '2-2-2012'
-        }
+      sliderlist: [
       ],
-      objourskill: {
+      objslider: {
       },
-      apipercent: [],
-      idupdatepercent: [],
-      baseUrl: process.env.API
+      baseUrl: 'http://localhost:8080'
     }
   },
-  //   watch: {
-  //     ourskill: {
-  //       handler(newVal, oldVal) {
-  //         if (
-  //           this.objourskill.ourskill == this.chekUpdateSubmitOurSkill.ourskill &&
-  //           this.objourskill.generalintroduction ==
-  //             this.chekUpdateSubmitOurSkill.generalintroduction &&
-  //           this.objourskill.title == this.chekUpdateSubmitOurSkill.title &&
-  //           this.objourskill.shortintroduction ==
-  //             this.chekUpdateSubmitOurSkill.shortintroduction
-  //         ) {
-  //           this.dirty = true;
-  //         } else {
-  //           this.dirty = false;
-  //         }
-  //       },
-  //       deep: true
-  //     },
-  //   },
+    watch: {
+      slider: {
+        handler(newVal, oldVal) {
+          if (
+            this.objslider.title == this.chekUpdateSubmitSlider.title &&
+            this.objslider.content ==
+              this.chekUpdateSubmitSlider.content
+          ) {
+            this.dirty = true;
+          } else {
+            this.dirty = false;
+          }
+        },
+        deep: true
+      },
+    },
   computed: {
-    ourskill () {
-      return this.objourskill
+    slider () {
+      return this.objslider
     }
-    // percent() {
-    //   return this.apipercent;
-    // }
   },
   methods: {
     closeTab () {
-      this.$router.push('/admin')
+      this.$router.push('/rem')
     },
     deleimgae () {
       this.showPreview = false
@@ -291,22 +274,27 @@ export default {
     onSubmit () {
       // update ourskill
       const formData = new FormData()
-      formData.append('data', JSON.stringify(this.objourskill))
+      this.objslider.createdatetime = date.formatDate(
+        new Date(),
+        "YYYY-MM-DDThh:mm:ss"
+      );
+      formData.append('data', JSON.stringify(this.objslider))
       formData.append('file', this.uploadPic)
       // eslint-disable-next-line no-undef
-      updateServicesOurSkill(
-        this.$route.params.ourskillId,
+      updateSlider(
+        this.$route.params.sliderId,
         formData
-      ).then(response => alert('update surcess'))
-
-      // update percent
-      this.percent.forEach((element, index) => {
-        const formDatapercent = new FormData()
-        formDatapercent.append('data', JSON.stringify(this.percent[index]))
-        // eslint-disable-next-line no-undef
-        updateServicesPercent(element.id, formDatapercent)
+      ).then(response => {
+          this.$q.notify({
+        color: "green-4",
+        textColor: "white",
+        icon: "done",
+        timeout: 2000,
+        message: "update  Successfully",
+       
+      });
+       this.dirty = true
       })
-      this.dirty = true
     },
     deletepercenr (index) {
       this.$q
@@ -327,7 +315,7 @@ export default {
           location.reload()
         })
     },
-    cancelCreateServicesOurSkill () {
+    cancelCreateSlider () {
       this.$q
         .dialog({
           title: 'Warning',
@@ -336,42 +324,27 @@ export default {
           cancel: true
         })
         .onOk(() => {
-          this.$router.push('/admin/slider')
+          this.$router.push('/rem/slider')
         })
     }
   },
   created () {
-    // loadAllOurSkill().then(response => {
-    //   this.ourskillist = response.data;
-    //   for (let i = 0; i < this.ourskillist.length; i++) {
-    //     if (this.$route.params.ourskillId === this.ourskillist[i].id) {
-    //       this.objourskill = this.ourskillist[i];
-    //       this.chekUpdateSubmitOurSkill.ourskill = response.data[i].ourskill;
-    //       this.chekUpdateSubmitOurSkill.generalintroduction =
-    //         response.data[i].generalintroduction;
-    //       this.chekUpdateSubmitOurSkill.title = response.data[i].title;
-    //       this.chekUpdateSubmitOurSkill.shortintroduction =
-    //         response.data[i].shortintroduction;
-    //       if (this.objourskill.img == null) {
-    //         this.showPreview = true;
-    //       } else {
-    //         this.showPreview = false;
-    //       }
-    //       break;
-    //     }
-    //   }
-    // });
-    // console.log(this.$route.params);
-    // console.log(this.ourskillist[0].id)
-    // if(this.$route.params.sliderId == "1"){
-    //     alert("sdjhg")
-    // }
-    for (let i = 0; i < this.ourskillist.length; i++) {
-      if (this.$route.params.sliderId === this.ourskillist[i].id) {
-        this.objourskill = this.ourskillist[i]
-        break
+    loadAllSlider().then(response => {
+      this.sliderlist = response.data;
+      for (let i = 0; i < this.sliderlist.length; i++) {
+        if (this.$route.params.sliderId === this.sliderlist[i].id) {
+          this.objslider = this.sliderlist[i];
+          this.chekUpdateSubmitSlider.title = response.data[i].title;
+          this.chekUpdateSubmitSlider.content = response.data[i].content;
+          if (this.objslider.img == null) {
+            this.showPreview = true;
+          } else {
+            this.showPreview = false;
+          }
+          break;
+        }
       }
-    }
+    });
   }
 }
 </script>

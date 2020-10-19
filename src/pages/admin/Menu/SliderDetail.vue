@@ -1,5 +1,5 @@
 <template>
-  <div  class="cus-layout">
+  <div v-if="Object.entries(slider).length > 0" class="cus-layout">
     <q-tabs
       v-model="tab"
       dense
@@ -61,16 +61,16 @@
                 </p>
               </div>
               <div class="col-xs-9 col-sm-9 col-md-9">
-                <!-- <div v-if="!showPreview" class="text-grey-8 q-gutter-xs border-image">
+                <div v-if="!showPreview" class="text-grey-8 q-gutter-xs">
                   <q-img
-                    :src="baseUrl + '/api/v1/blog/view' + ourskill.img.fileType.split('/').pop().toUpperCase() + '/' + ourskill.img.id"
+                    :src="baseUrl + '/api/v1/menu/view' + slider.img.fileType.split('/').pop().toUpperCase() + '/' + slider.img.id"
                     height="170px"
                     width="40%"
                     style="margin:0px 20px;margin-left:30px;"
                   />
                   <br />
-                </div> -->
-                <div  class="text-grey-8 q-gutter-xs">
+                </div>
+                <div v-if="showPreview" class="text-grey-8 q-gutter-xs">
                   <q-img
                     :src="imagePreview"
                     spinner-color="white"
@@ -94,7 +94,7 @@
                   text-color="primary"
                   label="List"
                   style="margin-right: 5px;padding:0px 10px;"
-                  :to="'/admin/slider'"
+                  :to="'/rem/slider'"
                 />
                 <q-btn
                   class="my-custom-toggle"
@@ -105,7 +105,7 @@
                   color="white"
                   text-color="primary"
                   label="Update"
-                  :to="'/admin/slider/update/' + slider.id"
+                  :to="'/rem/slider/update/' + slider.id"
                   style="margin-right: 5px;"
                 />
                 <q-btn
@@ -129,12 +129,10 @@
 </template>
 
 <script>
-// import {
-//   loadAllOurSkill,
-//   loadAllPercent,
-//   deleteServicesOurSkill,
-//   deleteServicesPercent
-// } from "src/service/servi/serviceslist";
+import {
+  loadAllSlider,
+  deleteSlider
+} from "src/services/menu/slider";
 export default {
   name: 'AdminServicesPage',
   data () {
@@ -148,31 +146,11 @@ export default {
       maxPage: 5,
       slider: {},
       sliderlist: [
-        {
-          id: '1',
-          title: 'Background image 1',
-          content: 'content 1 content 1 content 1 content 1 content 1 content 1 ',
-          createdatetime: '2-2-2012'
-        },
-        {
-          id: '2',
-          title: 'Background image 2',
-          content: 'content 2 content 2 content 2 content 2 content 2 content 2 ',
-          createdatetime: '2-2-2012'
-        },
-        {
-          id: '3',
-          title: 'Background image 3',
-          content: 'content 3 content 3 content 3 content 3 content 3 content 3 ',
-          createdatetime: '2-2-2012'
-        }
       ],
-      percent: [],
-      apipercent: [],
       showPreview: false,
       imagePreview:
         'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSy3-WoUO2VRc4jiy-6QK92fkm4d8ZgtG1nHw&usqp=CAU',
-      baseUrl: process.env.API
+      baseUrl: 'http://localhost:8080'
     }
   },
   methods: {
@@ -189,40 +167,28 @@ export default {
         })
         .onOk(() => {
           // eslint-disable-next-line no-undef
-          deleteServicesOurSkill(this.$route.params.sliderId).then(response =>
+          deleteSlider(this.$route.params.sliderId).then(response =>
             alert('delete surcess')
           )
-          this.apipercent.forEach((element, index) => {
-            // eslint-disable-next-line no-undef
-            deleteServicesPercent(this.apipercent[index]).then(response =>
-              alert('delete surcess')
-            )
-          })
-          location.reload(this.$router.push('/admin/slider'))
+          location.reload(this.$router.push('/rem/slider'))
         })
     }
   },
   created () {
-    // loadAllOurSkill().then(response => {
-    //   this.ourskillist = response.data;
-    //   for (let i = 0; i < this.ourskillist.length; i++) {
-    //     if (this.$route.params.ourskillId === this.ourskillist[i].id) {
-    //       this.ourskill = this.ourskillist[i];
-    //       if (this.ourskill.img == null) {
-    //         this.showPreview = true;
-    //       } else {
-    //         this.showPreview = false;
-    //       }
-    //       break;
-    //     }
-    //   }
-    // });
-    for (let i = 0; i < this.sliderlist.length; i++) {
-      if (this.$route.params.sliderId === this.sliderlist[i].id) {
-        this.slider = this.sliderlist[i]
-        break
+    loadAllSlider().then(response => {
+      this.sliderlist = response.data;
+      for (let i = 0; i < this.sliderlist.length; i++) {
+        if (this.$route.params.sliderId === this.sliderlist[i].id) {
+          this.slider = this.sliderlist[i];
+          if (this.slider.img == null) {
+            this.showPreview = true;
+          } else {
+            this.showPreview = false;
+          }
+          break;
+        }
       }
-    }
+    });
   }
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="cus-layout">
+  <div  class="cus-layout">
     <q-tabs
       v-model="tab"
       dense
@@ -40,7 +40,7 @@
                 class="cus-btn"
                 @click="loadpage()"
               />
-              <q-btn class="cus-btn" text-color="black" icon="add" to="/admin/slider/insert" />
+              <q-btn class="cus-btn" text-color="black" icon="add" to="/rem/slider/insert" />
               <q-btn class="cus-btn" text-color="black" icon="delete" @click="deleteServices()" />
             </div>
             <div class="row">
@@ -76,29 +76,35 @@
           </q-item>
           <q-list class="bg-white">
             <q-item
-              v-for="services in pagingServices"
-              :key="services.id"
+              v-for="slider in pagingSlider"
+              :key="slider.id"
               v-ripple
               class="row text-center q-pa-none"
             >
               <q-item-section class="col-1 res-col border-row ml-0">
-                <q-checkbox class="q-mx-auto" size="xs" v-model="services.delete" />
+                <q-checkbox class="q-mx-auto" size="xs" v-model="slider.delete" />
               </q-item-section>
               <q-item-section
                 class="col-2 res-update border-row ml-0 text-center q-pl-sm cursor-pointer"
               >
-                <q-item-label @click.stop="toServicesDetail(services.id)">{{services.title}}</q-item-label>
+                <q-item-label @click.stop="toServicesDetail(slider.id)">{{slider.title}}</q-item-label>
               </q-item-section>
                 <q-item-section class="col-3 border-row ml-0 cursor-pointer">
-                <q-item-label @click.stop="toServicesDetail(services.id)">{{services.content}}</q-item-label>
+                <q-item-label @click.stop="toServicesDetail(slider.id)">{{slider.content}}</q-item-label>
               </q-item-section>
-              <q-item-section class="col-2 border-row ml-0 cursor-pointer">
-                <q-item-label @click.stop="toServicesDetail(services.id)" style="padding:5px">
-                  <q-img src="https://cdn.quasar.dev/img/mountains.jpg" width="100px" />
+              <q-item-section v-if="slider.img != null" class="col-2 border-row ml-0 cursor-pointer">
+                <q-item-label @click.stop="toServicesDetail(slider.id)" style="padding:5px">
+                  <q-img :src="baseUrl + '/api/v1/menu/view' + slider.img.fileType.split('/').pop().toUpperCase() + '/' + slider.img.id" width="100px" />
                 </q-item-label>
               </q-item-section>
+              <q-item-section v-if="slider.img == null" class="col-2 border-row ml-0 cursor-pointer">
+                <q-item-label @click.stop="toServicesDetail(slider.id)" style="padding:5px">
+                  <q-img :src="imagePreview" width="100px" />
+                </q-item-label>
+              </q-item-section>
+              
                <q-item-section class="col-2 border-row ml-0" style="border-right: 1px solid rgba(0, 0, 0, 0.12)">
-                <q-item-label>{{services.createdatetime}}</q-item-label>
+                <q-item-label>{{slider.createdatetime}}</q-item-label>
               </q-item-section>
               <q-item-section
                 class="col-2 border-row ml-0"
@@ -109,7 +115,7 @@
                   size="xs"
                   color="primary"
                   label="Update"
-                  :to="'/admin/slider/update/' + services.id"
+                  :to="'/rem/slider/update/' + slider.id"
                 />
               </q-item-section>
 
@@ -125,10 +131,10 @@
 </template>
 
 <script>
-// import {
-//   loadAllServices,
-//   deleteServices
-// } from "src/service/servi/serviceslist";
+import {
+  loadAllSlider,
+  deleteSlider
+} from "src/services/menu/slider";
 import { date } from 'quasar'
 export default {
   name: 'AdminServicesPage',
@@ -138,60 +144,38 @@ export default {
       ServicesFilterByTitle: '',
       deleteAllServices: false,
       current: 1,
-      oldApiSliderList: [
-        {
-          id: '1',
-          title: 'Background image 1',
-          content: 'content 1 content 1 content 1 content 1 content 1 content 1 ',
-          createdatetime: '2-2-2012'
-        },
-        {
-          id: '2',
-          title: 'Background image 2',
-          content: 'content 2 content 2 content 2 content 2 content 2 content 2 ',
-          createdatetime: '2-2-2012'
-        },
-        {
-          id: '3',
-          title: 'Background image 3',
-          content: 'content 3 content 3 content 3 content 3 content 3 content 3 ',
-          createdatetime: '2-2-2012'
-        }
-      ],
+      oldApiSliderList: [],
       apiSliderList: [
-      ]
+      ],
+      showimage: false,
+       imagePreview:
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSy3-WoUO2VRc4jiy-6QK92fkm4d8ZgtG1nHw&usqp=CAU',
+      baseUrl: 'http://localhost:8080'
     }
   },
   computed: {
-    ServicesList () {
+    SliderList () {
       return this.apiSliderList.filter(slider => {
         return slider.title
           .toLowerCase()
           .match(this.ServicesFilterByTitle.toLowerCase())
       })
     },
-    deleteBlogList () {
-      const list = []
-      for (let i = 0; i < this.apiSliderList.length; i++) {
-        list.push({ id: this.apiSliderList[i].id, chosen: false })
-      }
-      return list
-    },
     maxPage () {
-      return Math.ceil(this.ServicesList.length / 5)
+      return Math.ceil(this.SliderList.length / 5)
     },
-    pagingServices () {
+    pagingSlider () {
       var startIndex = (this.current - 1) * 5
       var endIndex = this.current * 5 - 1
-      return this.ServicesList.slice(startIndex, endIndex + 1)
+      return this.SliderList.slice(startIndex, endIndex + 1)
     }
   },
   methods: {
     closeTab () {
-      this.$router.push('/tpm')
+      this.$router.push('/rem')
     },
     toServicesDetail (sliderId) {
-      this.$router.push('/admin/slider/detail/' + sliderId)
+      this.$router.push('/rem/slider/detail/' + sliderId)
     },
     deleteServices () {
       this.$q
@@ -210,9 +194,8 @@ export default {
           })
           deleteList.forEach((element, index) => {
             // eslint-disable-next-line no-undef
-            deleteServices(deleteList[index])
+            deleteSlider(deleteList[index])
           })
-
           location.reload()
         })
     },
@@ -234,25 +217,17 @@ export default {
     }
   },
   created () {
-    // loadAllServices().then(response => {
-    //   this.oldApiServicesList = response.data;
-    //   this.oldApiServicesList.forEach(ser => {
-    //     ser.createdatetime = date.formatDate(
-    //       new Date(ser.createdatetime),
-    //       "YYYY-MM-DD HH:mm"
-    //     );
-    //     ser = Object.assign({}, ser, { delete: false });
-    //     this.apiServicesList.push(ser);
-    //   });
-    // });apiServicesList
-    this.oldApiSliderList.forEach(ser => {
-      ser.createdatetime = date.formatDate(
-        new Date(ser.createdatetime),
-        'YYYY-MM-DD HH:mm'
-      )
-      ser = Object.assign({}, ser, { delete: false })
-      this.apiSliderList.push(ser)
-    })
+    loadAllSlider().then(response => {
+      this.oldApiSliderList = response.data;
+      this.oldApiSliderList.forEach(ser => {
+        ser.createdatetime = date.formatDate(
+          new Date(ser.createdatetime),
+          "YYYY-MM-DD HH:mm"
+        );
+        ser = Object.assign({}, ser, { delete: false });
+        this.apiSliderList.push(ser);
+      });
+    });
   }
 }
 </script>
