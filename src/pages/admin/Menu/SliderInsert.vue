@@ -1,5 +1,5 @@
 <template>
-  <div class="cus-layout">
+  <div  class="cus-layout">
     <q-tabs
       v-model="tab"
       dense
@@ -160,12 +160,9 @@
 </template>
 
 <script>
-// import {
-//   insertServicesOurSkill,
-//   loadAllPercent,
-//   loadAllOurSkill,
-//   insertServicesPercent
-// } from "src/service/servi/serviceslist";
+import {
+  insertSlider
+} from "src/services/menu/slider";
 import { date } from 'quasar'
 export default {
   name: 'AdminServicesPage',
@@ -183,7 +180,6 @@ export default {
       uploadPic: null,
       deleteimage: false,
       dirty: true,
-      apislider: [],
       arrayslider: {},
       slider: {
         title: '',
@@ -192,7 +188,7 @@ export default {
       },
       ifourskil: false,
       ifbtnskil: false,
-      baseUrl: process.env.API
+      baseUrl: 'http://localhost:8080'
     }
   },
   methods: {
@@ -221,7 +217,6 @@ export default {
     },
     onSubmit () {
       // insert ourskill
-      if (this.apislider.length < 1) {
         const formData = new FormData()
         this.slider.createdatetime = date.formatDate(
           new Date(),
@@ -230,9 +225,8 @@ export default {
         formData.append('data', JSON.stringify(this.slider))
         formData.append('file', this.uploadPic)
         // eslint-disable-next-line no-undef
-        insertServicesOurSkill(formData)
-      }
-      location.reload()
+        insertSlider(formData).then(response => alert('insert surcess'))     
+        location.reload()
     },
     cancelCreateSlider () {
       this.$q
@@ -243,26 +237,9 @@ export default {
           cancel: true
         })
         .onOk(() => {
-          this.$router.push('/admin/slider')
+          this.$router.push('/rem/slider')
         })
     }
-  },
-  created () {
-    // loadAllPercent().then(response => {
-    //   this.apipercent = response.data;
-    // });
-    // loadAllOurSkill().then(response => {
-    //   this.apiourskill = response.data;
-    //   if (this.apiourskill.length < 1) {
-    //     this.ifourskil = true;
-    //     this.ifbtnskil = true;
-    //   } else if (this.apiourskill.length == 1) {
-    //     this.ifourskil = false;
-    //     this.apiourskill.forEach((element, index) => {
-    //       this.arrayourSkill = this.apiourskill[index];
-    //     });
-    //   }
-    // });
   }
 }
 </script>
