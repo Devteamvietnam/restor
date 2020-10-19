@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { LocalStorage } from 'quasar'
+
 const API_URL = 'http://localhost:8080'
 
 class AuthService {

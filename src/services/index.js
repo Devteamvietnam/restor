@@ -15,7 +15,8 @@ const errorFunction = error => {
 }
 
 const service = axios.create({
-  baseURL: process.env.API, // api base_url
+  // baseURL: process.env.API, // api base_url
+  baseURL: 'http://localhost:8080',
   timeout: 20000, // request timeout
   headers: {
     Authorization: 'Bearer ' + LocalStorage.getItem('LocalAccessToken')

@@ -84,7 +84,7 @@
                 <q-item-label @click.stop="toArMenuDetail(arimage.id)">{{arimage.title}}</q-item-label>
               </q-item-section>
               <q-item-section class="col-3 border-row ml-0">
-                <q-item-label>{{arimage.createdatetime}}</q-item-label>
+                <q-item-label>{{arimage.createDate}}</q-item-label>
               </q-item-section>
               <q-item-section
                 class="col-3 border-row ml-0"
@@ -110,7 +110,7 @@
 </template>
 
 <script>
-// eslint-disable-next-line no-unused-vars
+import { loadAllArImage } from 'src/services/menu/ArImage'
 import { date } from 'quasar'
 export default {
   name: 'AdminArImagePage',
@@ -120,26 +120,7 @@ export default {
       ArimageFilterByTitle: '',
       deleteAllArimageList: false,
       current: 1,
-      oldApiArimageList: [
-        {
-          id: '1',
-          title: 'Food 1',
-          content: 'content',
-          createdatetime: '2020-10-16'
-        },
-        {
-          id: '2',
-          title: 'Food 2',
-          content: 'content 2',
-          createdatetime: '2020-10-16'
-        },
-        {
-          id: '3',
-          title: 'Food 3',
-          content: 'content 3',
-          createdatetime: '2020-10-16'
-        }
-      ],
+      oldApiArimageList: [],
       apiArimageList: []
     }
   },
@@ -162,10 +143,10 @@ export default {
   },
   methods: {
     closeTab () {
-      this.$router.push('/admin')
+      this.$router.push('/rem')
     },
     toArMenuDetail (arimageId) {
-      this.$router.push('/admin/ar-image/detail/' + arimageId)
+      this.$router.push('/rem/ar-image/detail/' + arimageId)
     },
     deleteArimage () {
       this.$q
@@ -203,6 +184,13 @@ export default {
     }
   },
   created () {
+    loadAllArImage().then(response => {
+      this.oldApiArimageList = response.data
+      this.oldApiArimageList.forEach(arimage => {
+        arimage = Object.assign({}, arimage, { delete: false })
+        this.apiArimageList.push(arimage)
+      })
+    })
     this.oldApiArimageList.forEach(ser => {
       ser.createdatetime = date.formatDate(
         new Date(ser.createdatetime),
