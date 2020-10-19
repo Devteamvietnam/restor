@@ -40,17 +40,18 @@
                 <p class="col-sm-2 col-12 cus-text">Title</p>
                 <q-input
                   class="col-sm-10 col-12"
-                  v-model="ourSkill.ourskill"
+                  v-model="slider.title"
                   outlined
                   dense
                   lazy-rules
+                  placeholder="Enter Title"
                   :rules="[ val =>  val !== null && val !== '' || 'Please type a name']"
                 />
                 <!----general-introduction-->
                 <p class="col-sm-2 col-12 cus-text">Content</p>
                 <q-editor
                   class="col-sm-10 col-12"
-                  v-model="ourSkill.generalintroduction"
+                  v-model="slider.content"
                   placeholder="Enter Content"
                   :toolbar="[
                   [
@@ -148,7 +149,7 @@
                 color="white"
                 text-color="primary"
                 label="Canel"
-                @click="cancelCreateServicesOurSkill"
+                @click="cancelCreateSlider"
               />
             </div>
           </q-form>
@@ -182,16 +183,12 @@ export default {
       uploadPic: null,
       deleteimage: false,
       dirty: true,
-      percent: [],
-      apipercent: [],
-      apiourskill: [],
-      arrayourSkill: {},
-      ourSkill: {
-        ourskill: '',
-        generalintroduction: '',
-        createdatetime: '',
+      apislider: [],
+      arrayslider: {},
+      slider: {
         title: '',
-        shortintroduction: ''
+        content: '',
+        createdatetime: '',
       },
       ifourskil: false,
       ifbtnskil: false,
@@ -224,34 +221,20 @@ export default {
     },
     onSubmit () {
       // insert ourskill
-      if (this.apiourskill.length < 1) {
+      if (this.apislider.length < 1) {
         const formData = new FormData()
-        this.ourSkill.createdatetime = date.formatDate(
+        this.slider.createdatetime = date.formatDate(
           new Date(),
           'YYYY-MM-DDThh:mm:ss'
         )
-        formData.append('data', JSON.stringify(this.ourSkill))
+        formData.append('data', JSON.stringify(this.slider))
         formData.append('file', this.uploadPic)
         // eslint-disable-next-line no-undef
         insertServicesOurSkill(formData)
       }
       location.reload()
     },
-    createpercenr () {
-      const skill = {
-        name: '',
-        percent: ''
-      }
-      this.percent.push(skill)
-      this.ifbtnskil = true
-    },
-    deletepercenr (id) {
-      this.percent.splice(id, 1)
-      if (this.percent.length === 0) {
-        this.ifbtnskil = false
-      }
-    },
-    cancelCreateServicesOurSkill () {
+    cancelCreateSlider () {
       this.$q
         .dialog({
           title: 'Warning',
