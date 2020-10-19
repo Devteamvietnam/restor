@@ -107,18 +107,39 @@
                   style="margin-top:20px;"
                 >
                   <q-list class="col-sm-10 col-12">
-                    <q-item>
-                      <q-item-section>
-                        <q-item>
-                          <q-item-section top>
-                            <div  class="text-grey-8 q-gutter-xs">
-                              <q-img :src="imagePreview" style="height: auto; width: 200px" />
-                              <br />
-                              <input type="file" accept="image/*" @change="uploadImage($event)" />
-                            </div>
-                          </q-item-section>
-                        </q-item>
-                      </q-item-section>
+                    <q-item class="row">
+                        <q-item-section class="col-10">
+                            <q-list class="col-sm-10 col-12">
+                                <q-item>
+                                    <q-item-section>
+                                        <q-item>
+                                            <q-item-section top="top">
+                                                <div v-if="!showPreview" class="text-grey-8 q-gutter-xs">
+                                                    <q-img :src="uploadPic" style="height: auto; max-width: 300px"/>
+                                                    <br/>
+                                                    <input type="file" accept="image/*" @change="uploadImage($event)"/>
+                                                </div>
+                                                <div v-if="showPreview" class="text-grey-8 q-gutter-xs">
+                                                    <q-img
+                                                        :src="imagePreview"
+                                                        spinner-color="white"
+                                                        style="height: auto; max-width: 100px"/>
+                                                    <br/>
+                                                    <br/>
+                                                    <q-item-label v-if="(deleteimage = true)">
+                                                        <p
+                                                            class="col-3 content cursor-pointer"
+                                                            style="color: #1976d2;"
+                                                            @click="delimage">delete</p>
+                                                    </q-item-label>
+                                                    <input type="file" accept="image/*" @change="uploadImage($event)"/>
+                                                </div>
+                                            </q-item-section>
+                                        </q-item>
+                                    </q-item-section>
+                                </q-item>
+                            </q-list>
+                        </q-item-section>
                     </q-item>
                   </q-list>
                 </div>
@@ -159,6 +180,7 @@
 </template>
 
 <script>
+import { insertArImage } from 'src/services/menu/ArImage'
 import { date } from 'quasar'
 export default {
   name: 'AdminArimagePage',
@@ -173,18 +195,23 @@ export default {
       uploadPic: null,
       deleteimage: false,
       dirty: true,
-      apiarimage: [],
       arimage: {
         title: '',
         content: '',
-        createdatetime: ''
+        createdDate: ''
       },
-      baseUrl: process.env.API
+      baseUrl: 'http://localhost:8080'
     }
   },
   methods: {
     closeTab () {
-      this.$router.push('/admin')
+      this.$router.push('/rem')
+    },
+    delimage () {
+      this.showPreview = false
+      this.imagePreview = ''
+      this.uploadPic = null
+      this.dirty = true
     },
     uploadImage (event) {
       this.uploadPic = event.target.files[0]
@@ -207,16 +234,19 @@ export default {
       this.dirty = false
     },
     onSubmit () {
-      if (this.apiarimage.length < 1) {
-        const formData = new FormData()
-        this.arimage.createdatetime = date.formatDate(
-          new Date(),
-          'YYYY-MM-DDThh:mm:ss'
-        )
-        formData.append('data', JSON.stringify(this.arimage))
-        formData.append('file', this.uploadPic)
-        // eslint-disable-next-line no-undef
-        insertArimage(formData)
+      const timeStamp = Date.now()
+      this.arimage.createdDate = date.formatDate(timeStamp, 'YYYY-MM-DD HH:mm')
+      const formData = new FormData()
+      formData.append('data', JSON.stringify(this.arimage))
+      formData.append('file', this.uploadPic)
+      insertArImage(formData)
+      // eslint-disable-next-line no-unused-vars
+      for (var value of formData.values()) {
+        this
+          .$q
+          .notify(
+            { color: 'green-4', textColor: 'white', icon: 'done', timeout: 2000, message: 'Insert  Successfully' }
+          )
       }
       location.reload()
     },
@@ -229,12 +259,9 @@ export default {
           cancel: true
         })
         .onOk(() => {
-          this.$router.push('/admin/ar-image')
+          this.$router.push('/rem/ar-image')
         })
     }
-  },
-  created () {
-
   }
 }
 </script>

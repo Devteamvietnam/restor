@@ -1,5 +1,5 @@
 <template>
-  <div  class="cus-layout">
+  <div v-if="Object.entries(arimage).length > 0" class="cus-layout">
     <q-tabs
       v-model="tab"
       dense
@@ -60,16 +60,16 @@
                 </p>
               </div>
               <div class="col-xs-9 col-sm-9 col-md-9">
-                <!-- <div v-if="!showPreview" class="text-grey-8 q-gutter-xs border-image">
+                <div v-if="!showPreview" class="text-grey-8 q-gutter-xs">
                   <q-img
-                    :src="baseUrl + '/api/v1/blog/view' + ourskill.img.fileType.split('/').pop().toUpperCase() + '/' + ourskill.img.id"
-                    height="170px"
+                    :src="baseUrl + '/api/v1/menu/view' + arimage.img.fileType.split('/').pop().toUpperCase() + '/' + arimage.img.id"
+                    height="50%"
                     width="40%"
                     style="margin:0px 20px;margin-left:30px;"
                   />
                   <br />
-                </div> -->
-                <div  class="text-grey-8 q-gutter-xs">
+                </div>
+                <div v-if="showPreview" class="text-grey-8 q-gutter-xs">
                   <q-img
                     :src="imagePreview"
                     spinner-color="white"
@@ -93,7 +93,7 @@
                   text-color="primary"
                   label="List"
                   style="margin-right: 5px;padding:0px 10px;"
-                  :to="'/admin/ar-image'"
+                  :to="'/rem/ar-image'"
                 />
                 <q-btn
                   class="my-custom-toggle"
@@ -104,7 +104,7 @@
                   color="white"
                   text-color="primary"
                   label="Update"
-                  :to="'/admin/ar-image/update/' + arimage.id"
+                  :to="'/rem/ar-image/update/' + arimage.id"
                   style="margin-right: 5px;"
                 />
                 <q-btn
@@ -128,6 +128,7 @@
 </template>
 
 <script>
+import { loadAllArImage } from 'src/services/menu/ArImage'
 export default {
   name: 'AdminImagePage',
   data () {
@@ -136,37 +137,47 @@ export default {
       current: 1,
       maxPage: 5,
       arimage: {},
-      arimagelist: [
-        {
-          id: '1',
-          title: 'Food 1',
-          content: 'content',
-          createdatetime: '2020-10-16'
-        },
-        {
-          id: '2',
-          title: 'Food 2',
-          content: 'content 2',
-          createdatetime: '2020-10-16'
-        },
-        {
-          id: '3',
-          title: 'Food 3',
-          content: 'content 3',
-          createdatetime: '2020-10-16'
-        }
-      ],
-      percent: [],
-      apipercent: [],
+      arimagelist: [],
       showPreview: false,
       imagePreview:
         'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSy3-WoUO2VRc4jiy-6QK92fkm4d8ZgtG1nHw&usqp=CAU',
-      baseUrl: process.env.API
+      baseUrl: 'http://localhost:8080'
     }
+  },
+  computed: {
+    deleteArimageList () {
+      const list = []
+      for (let i = 0; i < this.arimagelist.length; i++) {
+        list.push({
+          id: this
+            .arimagelist[i]
+            .id,
+          chosen: false
+        })
+      }
+      return list
+    }
+  },
+  created () {
+    loadAllArImage().then(response => {
+      this.arimagelist = response
+        .data
+      for (let i = 0; i < this.arimagelist.length; i++) {
+        if (this.$route.params.arimageId === this.arimagelist[i].id) {
+          this.arimage = this.arimagelist[i]
+          if (this.arimage.img == null) {
+            this.showPreview = true
+          } else {
+            this.showPreview = false
+          }
+          break
+        }
+      }
+    })
   },
   methods: {
     closeTab () {
-      this.$router.push('/admin')
+      this.$router.push('/rem')
     },
     onSubmitDelete () {
       this.$q
@@ -178,33 +189,15 @@ export default {
         })
         .onOk(() => {
           // eslint-disable-next-line no-undef
-          deleteServicesOurSkill(this.$route.params.ourskillId).then(response =>
+          deleteArImage(this.$route.params.arimageId).then(response =>
             this
               .$q
               .notify(
                 { color: 'green-4', textColor: 'white', icon: 'done', timeout: 1000, message: 'Delete Successfully' }
               )
           )
-          this.apipercent.forEach((element, index) => {
-            // eslint-disable-next-line no-undef
-            deleteServicesPercent(this.apipercent[index]).then(response =>
-              this
-                .$q
-                .notify(
-                  { color: 'green-4', textColor: 'white', icon: 'done', timeout: 1000, message: 'Delete Successfully' }
-                )
-            )
-          })
-          location.reload(this.$router.push('/admin/ar-image/detail'))
+          location.reload(this.$router.push('/rem/ar-image/detail'))
         })
-    }
-  },
-  created () {
-    for (let i = 0; i < this.arimagelist.length; i++) {
-      if (this.$route.params.arimageId === this.arimagelist[i].id) {
-        this.arimage = this.arimagelist[i]
-        break
-      }
     }
   }
 }
@@ -254,10 +247,5 @@ table {
   border: 2px solid rgb(200, 200, 200);
   margin-top: 50px;
   height: auto;
-}
-.border-image {
-  border: 2px solid rgb(200, 200, 200);
-  width: 60%;
-  margin-left: 20px;
 }
 </style>

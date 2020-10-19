@@ -1,5 +1,5 @@
 <template>
-  <div class="cus-layout">
+  <div v-if="Object.entries(arimage).length > 0" class="cus-layout">
     <q-tabs
       v-model="tab"
       dense
@@ -107,23 +107,31 @@
                   style="margin-top:20px;"
                 >
                   <q-list class="col-sm-10 col-12">
-                    <q-item>
-                      <q-item-section>
-                        <q-item>
-                          <q-item-section top>
-                            <div  class="text-grey-8 q-gutter-xs">
-                              <q-img :src="imagePreview" style="height: auto; width: 200px" />
-                              <br />
-                              <input type="file" accept="image/*" @change="uploadImage($event)" />
-                            </div>
-                          </q-item-section>
-                        </q-item>
-                      </q-item-section>
-                    </q-item>
+                      <q-item>
+                         <q-item-section>
+                            <q-item>
+                                <q-item-section top="top">
+                                 <div v-if="!showPreview" class="text-grey-8 q-gutter-xs">
+                                 <q-img
+                                :src="baseUrl + '/api/v1/menu/view' + arimage.img.fileType.split('/').pop().toUpperCase() + '/' + arimage.img.id"
+                                    style="height: auto; max-width: 100px"/>
+                                              <br/>
+                                      <input type="file" accept="image/*" @change="uploadImage($event)"/>
+                                          </div>
+                                      <div v-if="showPreview" class="text-grey-8 q-gutter-xs">
+                                              <q-img
+                                                :src="imagePreview"
+                                                 spinner-color="white"
+                                                  style="height: auto; max-width: 100px"/>
+                                        <input type="file" accept="image/*" @change="uploadImage($event)"/>
+                                        </div>
+                                     </q-item-section>
+                                    </q-item>
+                        </q-item-section>
+                   </q-item>
                   </q-list>
                 </div>
               </div>
-              <!----skill percent--->
             </div>
             <!--button save---->
             <div class="text-right" style="margin:20px; width: 70%;">
@@ -159,6 +167,7 @@
 </template>
 
 <script>
+import { loadAllArImage, updateArimage } from 'src/services/menu/ArImage'
 import { date } from 'quasar'
 export default {
   name: 'AdminArimagePage',
@@ -173,33 +182,20 @@ export default {
       uploadPic: null,
       deleteimage: false,
       dirty: true,
-      apiarimage: [
-        {
-          id: '1',
-          title: 'Food 1',
-          content: 'content',
-          createdatetime: '2020-10-16'
-        },
-        {
-          id: '2',
-          title: 'Food 2',
-          content: 'content 2',
-          createdatetime: '2020-10-16'
-        },
-        {
-          id: '3',
-          title: 'Food 3',
-          content: 'content 3',
-          createdatetime: '2020-10-16'
-        }
-      ],
+      arimageList: [],
       arimage: {},
-      baseUrl: process.env.API
+      baseUrl: 'http://localhost:8080'
     }
   },
   methods: {
     closeTab () {
-      this.$router.push('/admin')
+      this.$router.push('/rem')
+    },
+    delimage () {
+      this.showPreview = false
+      this.imagePreview = ''
+      this.uploadPic = null
+      this.dirty = true
     },
     uploadImage (event) {
       this.uploadPic = event.target.files[0]
@@ -222,16 +218,29 @@ export default {
       this.dirty = false
     },
     onSubmit () {
-      if (this.apiarimage.length < 1) {
+      if (!this.arimage.img || this.arimage.img === '&nbsp;') {
+        this
+          .$q
+          .dialog(
+            { title: 'Warning', message: 'Please Update Image', persistent: true }
+          )
+      } else {
         const formData = new FormData()
-        this.arimage.createdatetime = date.formatDate(
+        this.arimage.createdDate = date.formatDate(
           new Date(),
           'YYYY-MM-DDThh:mm:ss'
         )
         formData.append('data', JSON.stringify(this.arimage))
         formData.append('file', this.uploadPic)
-        // eslint-disable-next-line no-undef
-        insertArimage(formData)
+        updateArimage(this.$route.params.arimageId, formData).then(response => {
+          this
+            .$q
+            .notify(
+              { color: 'green-4', textColor: 'white', icon: 'done', timeout: 1000, message: 'Update Successfully' }
+            )
+        })
+        // eslint-disable-next-line no-unused-vars
+        for (var value of formData.values()) {}
       }
       location.reload()
     },
@@ -244,17 +253,26 @@ export default {
           cancel: true
         })
         .onOk(() => {
-          this.$router.push('/admin/ar-image')
+          this.$router.push('/rem/ar-image')
         })
     }
   },
   created () {
-    for (let i = 0; i < this.apiarimage.length; i++) {
-      if (this.$route.params.arimageId === this.apiarimage[i].id) {
-        this.arimage = this.apiarimage[i]
-        break
+    loadAllArImage().then(response => {
+      this.arimagelist = response
+        .data
+      for (let i = 0; i < this.arimagelist.length; i++) {
+        if (this.$route.params.arimageId === this.arimagelist[i].id) {
+          this.arimage = this.arimagelist[i]
+          if (this.arimage.img == null) {
+            this.showPreview = true
+          } else {
+            this.showPreview = false
+          }
+          break
+        }
       }
-    }
+    })
   }
 }
 </script>
