@@ -7,7 +7,7 @@
 // https://quasar.dev/quasar-cli/quasar-conf-js
 /* eslint-env node */
 
-module.exports = function (/* ctx */) {
+module.exports = function (ctx) {
   return {
     // https://quasar.dev/quasar-cli/supporting-ts
     supportTS: false,
@@ -45,6 +45,16 @@ module.exports = function (/* ctx */) {
 
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
     build: {
+      env: ctx.dev
+        ? { // on dev
+          // API: JSON.stringify('http://localhost:8080'),
+          API: JSON.stringify('http://localhost:8080'),
+          APP_NAME: JSON.stringify(require('./package.json').productName)
+        }
+        : { // on build (production)
+          API: JSON.stringify('http://localhost:8080'),
+          APP_NAME: JSON.stringify(require('./package.json').productName)
+        },
       vueRouterMode: 'hash', // available values: 'hash', 'history'
       distDir: 'target/dist',
       // transpile: false,

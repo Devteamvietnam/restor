@@ -1,10 +1,17 @@
 
 const routes = [
   {
-    path: '/admin',
+    path: '/login',
+    component: () => import('pages/admin/Login.vue')
+  },
+  {
+    path: '/res/register',
+    component: () => import('pages/admin/Register.vue')
+  },
+  {
+    path: '/rem',
     component: () => import('layouts/AdminLayout.vue'),
     children: [
-      { path: 'admin', component: () => import('pages/admin/Index.vue') },
       { path: 'slider', component: () => import('pages/admin/Menu/Slider.vue') },
       { path: 'slider/insert', component: () => import('pages/admin/Menu/SliderInsert') },
       { path: 'slider/detail/:sliderId', component: () => import('pages/admin/Menu/SliderDetail') },
@@ -21,7 +28,10 @@ const routes = [
       { path: 'ar-image/insert', component: () => import('pages/admin/Menu/ArImageInsert.vue') },
       { path: 'ar-image/detail/:arimageId', component: () => import('pages/admin/Menu/ArImageDetail.vue') },
       { path: 'ar-image/update/:arimageId', component: () => import('pages/admin/Menu/ArImageUpdate.vue') },
-      { path: 'ar-menu', component: () => import('pages/admin/Menu/ArMenu.vue') }
+      { path: 'ar-menu', component: () => import('pages/admin/Menu/ArMenu.vue') },
+      { path: 'ar-menu/insert', component: () => import('pages/admin/Menu/ArMenuInsert.vue') },
+      { path: 'ar-menu/detail/:armenuId', component: () => import('pages/admin/Menu/ArMenuDetail.vue') },
+      { path: 'ar-menu/update/:armenuId', component: () => import('pages/admin/Menu/ArMenuUpdate.vue') }
     ]
   }
 ]

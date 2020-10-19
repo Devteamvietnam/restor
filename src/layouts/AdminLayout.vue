@@ -13,8 +13,25 @@
             aria-label="Menu"
           />
         </div>
-                <div class="q-pl-sm q-gutter-sm row items-center no-wrap">
+        <div class="q-pl-sm q-gutter-sm row items-center no-wrap">
           <q-btn v-if="$q.screen.gt.xs" dense flat>
+          </q-btn>
+            <q-btn dense flat no-wrap>
+            <q-avatar rounded size="30px">
+              <img src="https://svgur.com/i/65U.svg">
+            </q-avatar>
+            <p class="user" >{{currentUser.username}}</p>
+            <q-icon name="arrow_drop_down" size="16px" />
+            <q-menu auto-close>
+              <q-list dense>
+                <q-separator />
+                <q-separator />
+                <q-item clickable class="GL__menu-link">
+                  <q-item-section icon="sign" @click="logOut">Sign out
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
           </q-btn>
         </div>
       </q-toolbar>
@@ -85,12 +102,19 @@ export default {
   computed: {
     menu () {
       return this.$store.state.Menu.menu
+    },
+    currentUser () {
+      return this.$store.state.auth.user
     }
   },
   methods: {
     clickMenu () {
       this.$store.commit('changeShowMenuList', !this.$store.state.showMenuList)
       this.right = !this.right
+    },
+    logOut () {
+      this.$store.dispatch('auth/logout')
+      this.$router.push('/login')
     },
     toMenu (link, name) {
       if (this.$route.path !== link) {
@@ -134,6 +158,10 @@ export default {
     background-color: #E6F1Fc;
     color: #1976D2;
     border-radius: 15px;
+  }
+  .user{
+    margin: 5%;
+    color: #E6F1Fc;
   }
 /* @media screen and (min-width: 760px){
     #dropDown {
