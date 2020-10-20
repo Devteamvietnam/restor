@@ -29,7 +29,7 @@
                    {{name}}
                     - Update
                 </div>
-                <q-form class="cus-container">
+                <q-form @submit="onSubmit" class="cus-container">
                     <q-item class="row">
                         <q-item-section class="col-2 line-40">
                             <q-item-label>AR Video*:</q-item-label>
@@ -142,57 +142,39 @@
 </template>
 
 <script>
-// eslint-disable-next-line no-unused-vars
+import { loadAllArVideo, updateArVideo } from 'src/services/menu/ArVideo'
 import { date } from 'quasar'
-
 export default {
   name: 'AdminArvideoPage',
   data () {
     return {
       tab: 'arvideo',
       name: 'Ar Video',
-      showPreview: false,
-      baseUrl: process.env.API,
-      imagePreview: '',
       arvideo: {},
-      arvideoList: [
-        {
-          id: '1',
-          title: 'Video demo 1',
-          link: 'http://youtube.com/',
-          content: 'Video demo 1',
-          createdatetime: '2020-10-16'
-        },
-        {
-          id: '2',
-          title: 'Video demo 2',
-          link: 'http://youtube.com/',
-          content: 'Video demo 2',
-          createdatetime: '2020-10-16'
-        }
-      ]
-    }
-  },
-  computed: {},
-  created () {
-    for (let i = 0; i < this.arvideoList.length; i++) {
-      if (this.$route.params.arvideoId === this.arvideoList[i].id) {
-        this.arvideo = this.arvideoList[i]
-        break
-      }
+      arvideoList: []
     }
   },
   methods: {
     closeTab () {
       this
         .$router
-        .push('/admin')
+        .push('/rem')
     },
-    deleteimage () {
-      this.showPreview = false
-      this.imagePreview = ''
-      this.uploadPic = null
-      this.dirty = true
+    onSubmit () {
+      const formData = new FormData()
+      this.arvideo.createdDate = date.formatDate(
+        new Date(),
+        'YYYY-MM-DDThh:mm:ss'
+      )
+      formData.append('data', JSON.stringify(this.arvideo))
+      updateArVideo(this.$route.params.arvideoId, formData).then(response => {
+        this
+          .$q
+          .notify(
+            { color: 'green-4', textColor: 'white', icon: 'done', timeout: 1000, message: 'Update Successfully' }
+          )
+        location.reload(this.$router.push('/rem/ar-video'))
+      })
     },
     cancelCreateArvideo () {
       this.$q
@@ -203,9 +185,20 @@ export default {
           cancel: true
         })
         .onOk(() => {
-          this.$router.push('/admin/ar-video')
+          this.$router.push('/rem/ar-video')
         })
     }
+  },
+  created () {
+    loadAllArVideo().then(response => {
+      this.arvideoList = response
+        .data
+      for (let i = 0; i < this.arvideoList.length; i++) {
+        if (this.$route.params.arvideoId === this.arvideoList[i].id) {
+          this.arvideo = this.arvideoList[i]
+        }
+      }
+    })
   }
 }
 </script>
