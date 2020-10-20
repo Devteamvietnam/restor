@@ -1,5 +1,5 @@
 <template>
-  <div class="cus-layout">
+  <div v-if="Object.entries(product).length > 0" class="cus-layout">
     <q-tabs
       v-model="tab"
       dense
@@ -36,25 +36,25 @@
           <q-form @submit="onSubmit" class="cus-form" style="margin-top:20px;">
             <div class="row">
               <div class="offset-sm-1 col-sm-8 col-12 offset-0 row">
-                <!---oursskill-->
-                <p class="col-sm-2 col-12 cus-text">Title*</p>
+                <!---product-->
+                <p class="col-sm-2 col-12 cus-text">Title</p>
                 <q-input
                   class="col-sm-10 col-12"
                   outlined
                   dense
                   v-model="product.title"
                   lazy-rules
-                  placeholder="Our Skill"
+                  placeholder="title"
                   :rules="[ val =>  val !== null && val !== '' || 'Please type a name']"
                 />
-                <p class="col-sm-2 col-12 cus-text">Category*</p>
+                <p class="col-sm-2 col-12 cus-text">Category</p>
                 <q-input
                   class="col-sm-10 col-12"
                   outlined
                   dense
                   v-model="product.category"
                   lazy-rules
-                  placeholder="Our Skill"
+                  placeholder="category"
                   :rules="[ val =>  val !== null && val !== '' || 'Please type a name']"
                 />
                 <!----general-introduction-->
@@ -62,7 +62,7 @@
                 <q-editor
                   class="col-sm-10 col-12"
                   v-model="product.content"
-                  placeholder="Enter Introduction"
+                  placeholder="Enter content"
                   :toolbar="[
                   [
                     {
@@ -111,14 +111,15 @@
                   verdana: 'Verdana'
                 }"
                 />
-                <p class="col-sm-2 col-12 cus-text">Title*</p>
+                <p class="col-sm-2 col-12 cus-text">Price</p>
                 <q-input
                   class="col-sm-10 col-12"
+                  style="margin-top: 20px"
                   outlined
                   dense
                   v-model="product.price"
                   lazy-rules
-                  placeholder="Our Skill"
+                  placeholder="price"
                   :rules="[ val =>  val !== null && val !== '' || 'Please type a name']"
                 />
                 <!----image-->
@@ -129,15 +130,15 @@
                       <q-item-section>
                         <q-item>
                           <q-item-section top>
-                            <!-- <div v-if="!showPreview" class="text-grey-8 q-gutter-xs">
+                            <div v-if="!showPreview" class="text-grey-8 q-gutter-xs">
                               <q-img
-                                :src="baseUrl + '/api/v1/blog/view' + ourskill.img.fileType.split('/').pop().toUpperCase() + '/' + ourskill.img.id"
-                                style="height: auto; max-width: 100px"
+                                :src="baseUrl + '/api/v1/menu/view' + product.img.fileType.split('/').pop().toUpperCase() + '/' + product.img.id"
+                                style="height: auto; max-width: 250px"
                               />
                               <br />
                               <input type="file" accept="image/*" @change="uploadImage($event)" />
-                            </div> -->
-                            <div  class="text-grey-8 q-gutter-xs">
+                            </div>
+                            <div  v-if="showPreview" class="text-grey-8 q-gutter-xs">
                               <q-img
                                 :src="imagePreview"
                                 spinner-color="white"
@@ -160,6 +161,21 @@
             <div class="text-right" style="margin:20px; width: 75%;">
               <q-btn
                 class="my-custom-toggle"
+                v-if="dirty == true"
+                disable
+                spread
+                no-caps
+                unelevated
+                toggle-color="primary"
+                color="white"
+                text-color="primary"
+                label="Update"
+                type="submit"
+                style="margin-right: 5px;"
+              />
+               <q-btn
+                class="my-custom-toggle"
+                v-else
                 spread
                 no-caps
                 unelevated
@@ -190,13 +206,10 @@
 </template>
 
 <script>
-// import {
-//   loadAllOurSkill,
-//   loadAllPercent,
-//   updateServicesOurSkill,
-//   updateServicesPercent,
-//   deleteServicesPercent
-// } from "src/service/servi/serviceslist";
+import {
+  loadAllProduct,updateProduct
+} from "src/services/menu/product";
+import { date } from "quasar";
 // eslint-disable-next-line no-unused-vars
 import { format } from 'quasar'
 export default {
@@ -217,67 +230,41 @@ export default {
       uploadPic: null,
       deleteimage: false,
       dirty: true,
-      chekUpdateSubmitOurSkill: {
-        ourskill: '',
-        generalintroduction: '',
+      chekUpdateSubmitProduct: {
         title: '',
-        shortintroduction: ''
+        category: '',
+        content: '',
+        price: ''
       },
-      chekUpdateSubmitPercent: [],
-      productlist: [
-        {
-          id: '1',
-          title: 'Food 1',
-          category: 'Drink',
-          content: 'this is content',
-          price: '100',
-          createdatetime: '2020-10-15'
-        },
-        {
-          id: '2',
-          title: 'Food 2',
-          category: 'Meet',
-          content: 'this is content',
-          price: '100',
-          createdatetime: '2020-10-15'
-        }
-      ],
+      productlist: [],
       product: {},
-      apipercent: [],
-      idupdatepercent: [],
-      baseUrl: process.env.API
+      baseUrl: 'http://localhost:8080'
     }
   },
-  //   watch: {
-  //     ourskill: {
-  //       handler(newVal, oldVal) {
-  //         if (
-  //           this.objourskill.ourskill == this.chekUpdateSubmitOurSkill.ourskill &&
-  //           this.objourskill.generalintroduction ==
-  //             this.chekUpdateSubmitOurSkill.generalintroduction &&
-  //           this.objourskill.title == this.chekUpdateSubmitOurSkill.title &&
-  //           this.objourskill.shortintroduction ==
-  //             this.chekUpdateSubmitOurSkill.shortintroduction
-  //         ) {
-  //           this.dirty = true;
-  //         } else {
-  //           this.dirty = false;
-  //         }
-  //       },
-  //       deep: true
-  //     },
-  //   },
+    watch: {
+      product: {
+        handler(newVal, oldVal) {
+          if (
+            this.product.title == this.chekUpdateSubmitProduct.title &&
+            this.product.category ==
+              this.chekUpdateSubmitProduct.category &&
+            this.product.content == this.chekUpdateSubmitProduct.content &&
+            this.product.price ==
+              this.chekUpdateSubmitProduct.price
+          ) {
+            this.dirty = true;
+          } else {
+            this.dirty = false;
+          }
+        },
+        deep: true
+      },
+    },
   computed: {
-    // ourskill () {
-    //   return this.product
-    // }
-    // percent() {
-    //   return this.apipercent;
-    // }
   },
   methods: {
     closeTab () {
-      this.$router.push('/admin')
+      this.$router.push('/rem')
     },
     deleimgae () {
       this.showPreview = false
@@ -308,41 +295,27 @@ export default {
     onSubmit () {
       // update ourskill
       const formData = new FormData()
-      formData.append('data', JSON.stringify(this.objourskill))
+      this.product.createdatetime = date.formatDate(
+        new Date(),
+        "YYYY-MM-DDThh:mm:ss"
+      );
+      formData.append('data', JSON.stringify(this.product))
       formData.append('file', this.uploadPic)
       // eslint-disable-next-line no-undef
-      updateServicesOurSkill(
-        this.$route.params.ourskillId,
+      updateProduct(
+        this.$route.params.productId,
         formData
-      ).then(response => alert('update surcess'))
-
-      // update percent
-      this.percent.forEach((element, index) => {
-        const formDatapercent = new FormData()
-        formDatapercent.append('data', JSON.stringify(this.percent[index]))
-        // eslint-disable-next-line no-undef
-        updateServicesPercent(element.id, formDatapercent)
+      ).then(response =>{
+         this.$q.notify({
+        color: "green-4",
+        textColor: "white",
+        icon: "done",
+        timeout: 2000,
+        message: "update  Successfully",
+       
+      });
+       this.dirty = true
       })
-      this.dirty = true
-    },
-    deletepercenr (index) {
-      this.$q
-        .dialog({
-          title: 'Warning',
-          message: 'Do you really want to Delete?',
-          persistent: true,
-          cancel: true
-        })
-        .onOk(() => {
-          this.percent.forEach((element, index1) => {
-            if (index === index1) {
-              // eslint-disable-next-line no-undef
-              deleteServicesPercent(element.id)
-              this.percent.splice(index, 1)
-            }
-          })
-          location.reload()
-        })
     },
     cancelCreateProductList () {
       this.$q
@@ -353,42 +326,31 @@ export default {
           cancel: true
         })
         .onOk(() => {
-          this.$router.push('/admin/product-list')
+          this.$router.push('/rem/product-list')
         })
     }
   },
   created () {
-    // loadAllOurSkill().then(response => {
-    //   this.ourskillist = response.data;
-    //   for (let i = 0; i < this.ourskillist.length; i++) {
-    //     if (this.$route.params.ourskillId === this.ourskillist[i].id) {
-    //       this.objourskill = this.ourskillist[i];
-    //       this.chekUpdateSubmitOurSkill.ourskill = response.data[i].ourskill;
-    //       this.chekUpdateSubmitOurSkill.generalintroduction =
-    //         response.data[i].generalintroduction;
-    //       this.chekUpdateSubmitOurSkill.title = response.data[i].title;
-    //       this.chekUpdateSubmitOurSkill.shortintroduction =
-    //         response.data[i].shortintroduction;
-    //       if (this.objourskill.img == null) {
-    //         this.showPreview = true;
-    //       } else {
-    //         this.showPreview = false;
-    //       }
-    //       break;
-    //     }
-    //   }
-    // });
-    // console.log(this.$route.params);
-    // console.log(this.ourskillist[0].id)
-    // if(this.$route.params.sliderId == "1"){
-    //     alert("sdjhg")
-    // }
-    for (let i = 0; i < this.productlist.length; i++) {
-      if (this.$route.params.productId === this.productlist[i].id) {
-        this.product = this.productlist[i]
-        break
+    loadAllProduct().then(response => {
+      this.productlist = response.data;
+      for (let i = 0; i < this.productlist.length; i++) {
+        if (this.$route.params.productId === this.productlist[i].id) {
+          this.product = this.productlist[i];
+          this.chekUpdateSubmitProduct.title = response.data[i].title;
+          this.chekUpdateSubmitProduct.category =
+            response.data[i].category;
+          this.chekUpdateSubmitProduct.content = response.data[i].content;
+          this.chekUpdateSubmitProduct.price =
+            response.data[i].price;
+          if (this.product.img == null) {
+            this.showPreview = true;
+          } else {
+            this.showPreview = false;
+          }
+          break;
+        }
       }
-    }
+    });
   }
 }
 </script>

@@ -49,7 +49,7 @@
                 class="cus-btn"
                 text-color="black"
                 icon="add"
-                to="/admin/product-list/insert"
+                to="/rem/product-list/insert"
               />
               <q-btn
                 class="cus-btn"
@@ -135,7 +135,7 @@
                   size="xs"
                   color="primary"
                   label="Update"
-                  :to="'/admin/product-list/update/' + productlist.id"
+                  :to="'/rem/product-list/update/' + productlist.id"
                 />
               </q-item-section>
             </q-item>
@@ -155,6 +155,10 @@
 </template>
 
 <script>
+import {
+  loadAllProduct,
+  deleteProduct
+} from "src/services/menu/product";
 // eslint-disable-next-line no-unused-vars
 import { date } from "quasar";
 export default {
@@ -166,22 +170,6 @@ export default {
       deleteAllProductList: false,
       current: 1,
       oldApiProductList: [
-        {
-          id: "1",
-          title: "Food 1",
-          category: "Drink",
-          content: "this is content",
-          price: "100",
-          createdatetime: "2020-10-15",
-        },
-        {
-          id: "2",
-          title: "Food 2",
-          category: "Meet",
-          content: "this is content",
-          price: "100",
-          createdatetime: "2020-10-15",
-        },
       ],
       apiProductList: [],
     };
@@ -206,28 +194,32 @@ export default {
   },
   methods: {
     closeTab() {
-      this.$router.push("/admin");
+      this.$router.push("/rem");
     },
     toProductListDetail(productlistId) {
-      this.$router.push("/admin/product-list/detail/" + productlistId);
+      this.$router.push("/rem/product-list/detail/" + productlistId);
     },
     deleteProductList() {
       this.$q
         .dialog({
-          title: "Warning",
-          message: "Do you really want to  Delete?",
+          title: 'Warning',
+          message: 'Do you really want to  Delete?',
           persistent: true,
-          cancel: true,
+          cancel: true
         })
         .onOk(() => {
-          const deleteList = [];
-          this.apiProductList.forEach((productlist) => {
-            if (productlist.delete === true) {
-              deleteList.push(productlist.id);
+          const deleteList = []
+          this.apiProductList.forEach(slider => {
+            if (slider.delete === true) {
+              deleteList.push(slider.id)
             }
-          });
-          location.reload();
-        });
+          })
+          deleteList.forEach((element, index) => {
+            // eslint-disable-next-line no-undef
+            deleteProduct(deleteList[index])
+          })
+          location.reload()
+        })
     },
     loadpage() {
       location.reload();
@@ -236,36 +228,37 @@ export default {
   watch: {
     deleteAllProductList: function (val) {
       if (val === true) {
-        this.apiArimageList.forEach((productlist) => {
+        this.apiProductList.forEach((productlist) => {
           productlist.delete = true;
         });
       } else {
-        this.apiArimageList.forEach((productlist) => {
+        this.apiProductList.forEach((productlist) => {
           productlist.delete = false;
         });
       }
     },
   },
   created() {
-    // loadAllServices().then(response => {
-    //   this.oldApiServicesList = response.data;
-    //   this.oldApiServicesList.forEach(ser => {
-    //     ser.createdatetime = date.formatDate(
-    //       new Date(ser.createdatetime),
-    //       "YYYY-MM-DD HH:mm"
-    //     );
-    //     ser = Object.assign({}, ser, { delete: false });
-    //     this.apiServicesList.push(ser);
-    //   });
-    // });apiServicesList
-    this.oldApiProductList.forEach((ser) => {
-      ser.createdatetime = date.formatDate(
-        new Date(ser.createdatetime),
-        "YYYY-MM-DD HH:mm"
-      );
-      ser = Object.assign({}, ser, { delete: false });
-      this.apiProductList.push(ser);
+    loadAllProduct().then(response => {
+      this.oldApiProductList = response.data;
+      this.oldApiProductList.forEach(ser => {
+        ser.createdatetime = date.formatDate(
+          new Date(ser.createdatetime),
+          "YYYY-MM-DD HH:mm"
+        );
+        ser = Object.assign({}, ser, { delete: false });
+        this.apiProductList.push(ser);
+      });
     });
+
+    // this.oldApiProductList.forEach((ser) => {
+    //   ser.createdatetime = date.formatDate(
+    //     new Date(ser.createdatetime),
+    //     "YYYY-MM-DD HH:mm"
+    //   );
+    //   ser = Object.assign({}, ser, { delete: false });
+    //   this.apiProductList.push(ser);
+    // });
   },
 };
 </script>
