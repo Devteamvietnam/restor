@@ -26,7 +26,6 @@
             <b>Arvideo > Detail </b>
           </p>
         </div>
-        <!----content-detail-->
         <div class="boderlist">
           <div class="title-list" style="padding:10px;">
             <b>Arvideo - Detail</b>
@@ -34,7 +33,6 @@
           <q-separator />
           <q-form @submit="onSubmitDelete" class="cus-form" style="margin-top:20px;">
             <div class="row">
-              <!----our-skill-->
               <div class="col-xs-3 col-sm-3 col-md-3">
                 <p style="margin-top:20px;margin-left:30px;">
                   <b>Title*</b>
@@ -45,7 +43,6 @@
                   <i>{{arvideo.title}}</i>
                 </p>
               </div>
-              <!----gerenal-Introduction--->
               <div class="col-xs-3 col-sm-3 col-md-3">
                 <p style="margin-left:30px;">
                   <b>AR Video*</b>
@@ -74,7 +71,7 @@
                   text-color="primary"
                   label="List"
                   style="margin-right: 5px;padding:0px 10px;"
-                  :to="'/admin/ar-video'"
+                  :to="'/rem/ar-video'"
                 />
                 <q-btn
                   class="my-custom-toggle"
@@ -85,7 +82,7 @@
                   color="white"
                   text-color="primary"
                   label="Update"
-                  :to="'/admin/ar-video/update/' + arvideo.id"
+                  :to="'/rem/ar-video/update/' + arvideo.id"
                   style="margin-right: 5px;"
                 />
                 <q-btn
@@ -109,6 +106,7 @@
 </template>
 
 <script>
+import { loadAllArVideo, deleteArVideo } from 'src/services/menu/ArVideo'
 export default {
   name: 'AdminArvideoPage',
   data () {
@@ -118,33 +116,16 @@ export default {
       current: 1,
       maxPage: 5,
       arvideo: {},
-      arvideolist: [
-        {
-          id: '1',
-          title: 'Video demo 1',
-          link: 'http://youtube.com/',
-          content: 'Video demo 1',
-          createdatetime: '2020-10-16'
-        },
-        {
-          id: '2',
-          title: 'Video demo 2',
-          link: 'http://youtube.com/',
-          content: 'Video demo 2',
-          createdatetime: '2020-10-16'
-        }
-      ],
+      arvideolist: [],
       showPreview: false,
-      percent: [],
-      apipercent: [],
       imagePreview:
         'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSy3-WoUO2VRc4jiy-6QK92fkm4d8ZgtG1nHw&usqp=CAU',
-      baseUrl: process.env.API
+      baseUrl: 'http://localhost:8080'
     }
   },
   methods: {
     closeTab () {
-      this.$router.push('/admin')
+      this.$router.push('/rem')
     },
     onSubmitDelete () {
       this.$q
@@ -155,35 +136,33 @@ export default {
           cancel: true
         })
         .onOk(() => {
-          // eslint-disable-next-line no-undef
-          deleteArvideo(this.$route.params.arvideoId).then(response =>
+          deleteArVideo(this.$route.params.arvideoId).then(response =>
             this
               .$q
               .notify(
                 { color: 'green-4', textColor: 'white', icon: 'done', timeout: 1000, message: 'Delete Successfully' }
               )
           )
-          this.apipercent.forEach((element, index) => {
-            // eslint-disable-next-line no-undef
-            deleteArvideo(this.apipercent[index]).then(response =>
-              this
-                .$q
-                .notify(
-                  { color: 'green-4', textColor: 'white', icon: 'done', timeout: 1000, message: 'Delete Successfully' }
-                )
-            )
-          })
-          location.reload(this.$router.push('/admin/ar-video/detail'))
+          location.reload(this.$router.push('/admin/ar-video'))
         })
     }
   },
   created () {
-    for (let i = 0; i < this.arvideolist.length; i++) {
-      if (this.$route.params.arvideoId === this.arvideolist[i].id) {
-        this.arvideo = this.arvideolist[i]
-        break
+    loadAllArVideo().then(response => {
+      this.arvideolist = response
+        .data
+      for (let i = 0; i < this.arvideolist.length; i++) {
+        if (this.$route.params.arvideoId === this.arvideolist[i].id) {
+          this.arvideo = this.arvideolist[i]
+          if (this.arvideo.img == null) {
+            this.showPreview = true
+          } else {
+            this.showPreview = false
+          }
+          break
+        }
       }
-    }
+    })
   }
 }
 </script>

@@ -40,7 +40,7 @@
                 class="cus-btn"
                 @click="loadpage()"
               />
-              <q-btn class="cus-btn" text-color="black" icon="add" to="/admin/ar-video/insert" />
+              <q-btn class="cus-btn" text-color="black" icon="add" to="/rem/ar-video/insert" />
               <q-btn class="cus-btn" text-color="black" icon="delete" @click="deleteArvideo()" />
             </div>
             <div class="row">
@@ -53,7 +53,7 @@
           </div>
           <q-item v-ripple class="row text-center text-weight-bold q-pa-none q-mt-lg">
             <q-item-section class="col-1 res-col border ml-0">
-              <q-checkbox size="xs" v-model="deleteAllArvideoList" class="q-mx-auto" />
+              <q-checkbox size="xs" v-model="deleteAllArvideo" class="q-mx-auto" />
             </q-item-section>
             <q-item-section class="col-5 res-update border ml-0">
               <q-item-label class="cursor-pointer">Title</q-item-label>
@@ -84,7 +84,7 @@
                 <q-item-label @click.stop="toArvideoDetail(arvideo.id)">{{arvideo.title}}</q-item-label>
               </q-item-section>
               <q-item-section class="col-3 border-row ml-0">
-                <q-item-label>{{arvideo.createdatetime}}</q-item-label>
+                <q-item-label>{{arvideo.createdDate}}</q-item-label>
               </q-item-section>
               <q-item-section
                 class="col-3 border-row ml-0"
@@ -95,7 +95,7 @@
                   size="xs"
                   color="primary"
                   label="Update"
-                  :to="'/admin/ar-video/update/' + arvideo.id"
+                  :to="'/rem/ar-video/update/' + arvideo.id"
                 />
               </q-item-section>
             </q-item>
@@ -110,7 +110,7 @@
 </template>
 
 <script>
-// eslint-disable-next-line no-unused-vars
+import { loadAllArVideo, deleteArVideo } from 'src/services/menu/ArVideo'
 import { date } from 'quasar'
 export default {
   name: 'AdminArVideoPage',
@@ -118,25 +118,11 @@ export default {
     return {
       tab: 'arvideo',
       ArvideoFilterByTitle: '',
-      deleteAllArvideoList: false,
+      deleteAllArvideo: false,
       current: 1,
-      oldApiArvideoList: [
-        {
-          id: '1',
-          title: 'Video demo 1',
-          link: 'http://youtube.com/',
-          content: 'Video demo 1',
-          createdatetime: '2020-10-16'
-        },
-        {
-          id: '2',
-          title: 'Video demo 2',
-          link: 'http://youtube.com/',
-          content: 'Video demo 2',
-          createdatetime: '2020-10-16'
-        }
-      ],
-      apiArvideoList: []
+      oldApiArvideoList: [],
+      apiArvideoList: [],
+      baseUrl: 'http://localhost:8080'
     }
   },
   computed: {
@@ -148,20 +134,20 @@ export default {
       })
     },
     maxPage () {
-      return Math.ceil(this.apiArvideoList.length / 5)
+      return Math.ceil(this.ArvideoList.length / 5)
     },
     pagingArvideo () {
       var startIndex = (this.current - 1) * 5
       var endIndex = this.current * 5 - 1
-      return this.apiArvideoList.slice(startIndex, endIndex + 1)
+      return this.ArvideoList.slice(startIndex, endIndex + 1)
     }
   },
   methods: {
     closeTab () {
-      this.$router.push('/admin')
+      this.$router.push('/rem')
     },
     toArvideoDetail (arvideoId) {
-      this.$router.push('/admin/ar-video/detail/' + arvideoId)
+      this.$router.push('/rem/ar-video/detail/' + arvideoId)
     },
     deleteArvideo () {
       this.$q
@@ -177,6 +163,9 @@ export default {
             if (arvideo.delete === true) {
               deleteList.push(arvideo.id)
             }
+          })
+          deleteList.forEach((element, index) => {
+            deleteArVideo(deleteList[index])
           })
           location.reload()
         })
@@ -199,13 +188,16 @@ export default {
     }
   },
   created () {
-    this.oldApiArvideoList.forEach(ser => {
-      ser.createdatetime = date.formatDate(
-        new Date(ser.createdatetime),
-        'YYYY-MM-DD HH:mm'
-      )
-      ser = Object.assign({}, ser, { delete: false })
-      this.apiArvideoList.push(ser)
+    loadAllArVideo().then(response => {
+      this.oldApiArvideoList = response.data
+      this.oldApiArvideoList.forEach(ari => {
+        ari.createdDate = date.formatDate(
+          new Date(ari.createdDate),
+          'YYYY-MM-DD HH:mm'
+        )
+        ari = Object.assign({}, ari, { delete: false })
+        this.apiArvideoList.push(ari)
+      })
     })
   }
 }

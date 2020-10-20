@@ -29,7 +29,7 @@
                    {{name}}
                     - Insert
                 </div>
-                <q-form class="cus-container">
+                <q-form @submit="onSubmit" class="cus-container">
                     <q-item class="row">
                         <q-item-section class="col-2 line-40">
                             <q-item-label>AR Video*:</q-item-label>
@@ -142,7 +142,7 @@
 </template>
 
 <script>
-// eslint-disable-next-line no-unused-vars
+import { insertArVideo } from 'src/services/menu/ArVideo'
 import { date } from 'quasar'
 export default {
   name: 'AdminArVideoPage',
@@ -154,7 +154,7 @@ export default {
         title: '',
         link: '',
         content: '',
-        createdatetime: ''
+        createdDate: ''
       }
     }
   },
@@ -162,7 +162,23 @@ export default {
     closeTab () {
       this
         .$router
-        .push('/admin')
+        .push('/rem')
+    },
+    onSubmit () {
+      const timeStamp = Date.now()
+      this.arvideo.createdDate = date.formatDate(timeStamp, 'YYYY-MM-DD HH:mm')
+      const formData = new FormData()
+      formData.append('data', JSON.stringify(this.arvideo))
+      insertArVideo(formData)
+      // eslint-disable-next-line no-unused-vars
+      for (var value of formData.values()) {
+        this
+          .$q
+          .notify(
+            { color: 'green-4', textColor: 'white', icon: 'done', timeout: 5000, message: 'Insert  Successfully' }
+          )
+      }
+      location.reload(this.$router.push('/rem/ar-video'))
     },
     cancelArvideo () {
       this
@@ -173,7 +189,7 @@ export default {
         .onOk(() => {
           this
             .$router
-            .push('/admin/ar-video')
+            .push('/rem/ar-video')
         })
     }
   }
