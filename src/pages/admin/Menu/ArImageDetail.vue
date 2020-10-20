@@ -128,7 +128,7 @@
 </template>
 
 <script>
-import { loadAllArImage } from 'src/services/menu/ArImage'
+import { loadAllArImage, deleteArImage } from 'src/services/menu/ArImage'
 export default {
   name: 'AdminImagePage',
   data () {
@@ -188,7 +188,6 @@ export default {
           cancel: true
         })
         .onOk(() => {
-          // eslint-disable-next-line no-undef
           deleteArImage(this.$route.params.arimageId).then(response =>
             this
               .$q
@@ -196,7 +195,7 @@ export default {
                 { color: 'green-4', textColor: 'white', icon: 'done', timeout: 1000, message: 'Delete Successfully' }
               )
           )
-          location.reload(this.$router.push('/rem/ar-image/detail'))
+          location.reload(this.$router.push('/rem/ar-image'))
         })
     }
   }

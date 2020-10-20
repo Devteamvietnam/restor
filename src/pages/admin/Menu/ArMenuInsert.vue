@@ -24,13 +24,13 @@
       <q-tab-panel name="armenu">
         <div class="float-right title">
           <p>
-            <b>ARMenu > Insert</b>
+            <b>Armenu > Insert</b>
           </p>
         </div>
         <!----conten-detail-->
         <div class="boderlist">
           <div class="title-list" style="padding:10px;">
-            <b>ARenu - Insert</b>
+            <b>Armenu - Insert</b>
           </div>
           <q-separator />
           <q-form @submit="onSubmit" class="cus-form" style="margin-top:20px;">
@@ -54,16 +54,15 @@
                   lazy-rules
                   :rules="[ val =>  val !== null && val !== '' || 'Please type a name']"
                 />
-                 <p class="col-sm-2 col-12 cus-text">price*</p>
+                 <p class="col-sm-2 col-12 cus-text">Price*</p>
                 <q-input
                   class="col-sm-10 col-12"
                   v-model="armenu.price"
                   outlined
                   dense
                   lazy-rules
-                  :rules="[ val =>  val !== null && val !== '' || 'Please type price']"
+                  :rules="[ val =>  val !== null && val !== '' || 'Please type a name']"
                 />
-                <!----general-introduction-->
                 <p class="col-sm-2 col-12 cus-text">Content*</p>
                 <q-editor
                   class="col-sm-10 col-12"
@@ -124,18 +123,39 @@
                   style="margin-top:20px;"
                 >
                   <q-list class="col-sm-10 col-12">
-                    <q-item>
-                      <q-item-section>
-                        <q-item>
-                          <q-item-section top>
-                            <div  class="text-grey-8 q-gutter-xs">
-                              <q-img :src="imagePreview" style="height: auto; width: 200px" />
-                              <br />
-                              <input type="file" accept="image/*" @change="uploadImage($event)" />
-                            </div>
-                          </q-item-section>
-                        </q-item>
-                      </q-item-section>
+                    <q-item class="row">
+                        <q-item-section class="col-10">
+                            <q-list class="col-sm-10 col-12">
+                                <q-item>
+                                    <q-item-section>
+                                        <q-item>
+                                            <q-item-section top="top">
+                                                <div v-if="!showPreview" class="text-grey-8 q-gutter-xs">
+                                                    <q-img :src="uploadPic" style="height: auto; max-width: 300px"/>
+                                                    <br/>
+                                                    <input type="file" accept="image/*" @change="uploadImage($event)"/>
+                                                </div>
+                                                <div v-if="showPreview" class="text-grey-8 q-gutter-xs">
+                                                    <q-img
+                                                        :src="imagePreview"
+                                                        spinner-color="white"
+                                                        style="height: auto; max-width: 100px"/>
+                                                    <br/>
+                                                    <br/>
+                                                    <q-item-label v-if="(deleteimage = true)">
+                                                        <p
+                                                            class="col-3 content cursor-pointer"
+                                                            style="color: #1976d2;"
+                                                            @click="delimage">delete</p>
+                                                    </q-item-label>
+                                                    <input type="file" accept="image/*" @change="uploadImage($event)"/>
+                                                </div>
+                                            </q-item-section>
+                                        </q-item>
+                                    </q-item-section>
+                                </q-item>
+                            </q-list>
+                        </q-item-section>
                     </q-item>
                   </q-list>
                 </div>
@@ -175,9 +195,10 @@
 </template>
 
 <script>
+import { insertArMenu } from 'src/services/menu/ArMenu'
 import { date } from 'quasar'
 export default {
-  name: 'AdminArMenuPage',
+  name: 'AdminArmenuPage',
   data () {
     return {
       tab: 'armenu',
@@ -189,20 +210,25 @@ export default {
       uploadPic: null,
       deleteimage: false,
       dirty: true,
-      apiarmenu: [],
       armenu: {
         title: '',
-        category: '',
         content: '',
+        category: '',
         price: '',
-        createdatetime: ''
+        createdDate: ''
       },
-      baseUrl: process.env.API
+      baseUrl: 'http://localhost:8080'
     }
   },
   methods: {
     closeTab () {
-      this.$router.push('/admin')
+      this.$router.push('/rem')
+    },
+    delimage () {
+      this.showPreview = false
+      this.imagePreview = ''
+      this.uploadPic = null
+      this.dirty = true
     },
     uploadImage (event) {
       this.uploadPic = event.target.files[0]
@@ -225,18 +251,19 @@ export default {
       this.dirty = false
     },
     onSubmit () {
-      if (this.apiarmenu.length < 1) {
-        const formData = new FormData()
-        this.armenu.createdatetime = date.formatDate(
-          new Date(),
-          'YYYY-MM-DDThh:mm:ss'
+      const timeStamp = Date.now()
+      this.armenu.createdDate = date.formatDate(timeStamp, 'YYYY-MM-DD HH:mm')
+      const formData = new FormData()
+      formData.append('data', JSON.stringify(this.armenu))
+      formData.append('file', this.uploadPic)
+      insertArMenu(formData)
+      this
+        .$q
+        .notify(
+          { color: 'green-4', textColor: 'white', icon: 'done', timeout: 2000, message: 'Insert  Successfully' }
         )
-        formData.append('data', JSON.stringify(this.armenu))
-        formData.append('file', this.uploadPic)
-        // eslint-disable-next-line no-undef
-        insertArMenu(formData)
-      }
-      location.reload()
+
+      location.reload(this.$router.push('/rem/ar-menu'))
     },
     cancelCreateArMenu () {
       this.$q
@@ -247,12 +274,9 @@ export default {
           cancel: true
         })
         .onOk(() => {
-          this.$router.push('/admin/ar-menu')
+          this.$router.push('/rem/ar-menu')
         })
     }
-  },
-  created () {
-
   }
 }
 </script>

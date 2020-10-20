@@ -1,5 +1,5 @@
 <template>
-  <div  class="cus-layout">
+  <div v-if="Object.entries(armenu).length > 0" class="cus-layout">
     <q-tabs
       v-model="tab"
       dense
@@ -10,7 +10,7 @@
       indicator-color="transparent"
       no-caps
     >
- <q-tab name="armenu" label="Ar Menu" icon="menu" class="cus-tab">
+ <q-tab name="armenu" label="Ar Image" icon="camera" class="cus-tab">
         <q-icon
           name="fas fa-times"
           size="10px"
@@ -23,18 +23,16 @@
       <q-tab-panel name="armenu">
         <div class="float-right title">
           <p>
-            <b>ArMenu > Detail </b>
+            <b>Armenu > Detail </b>
           </p>
         </div>
-        <!----content-detail-->
         <div class="boderlist">
           <div class="title-list" style="padding:10px;">
-            <b>ArMenu - Detail</b>
+            <b>Armenu - Detail</b>
           </div>
           <q-separator />
           <q-form @submit="onSubmitDelete" class="cus-form" style="margin-top:20px;">
             <div class="row">
-              <!----our-skill-->
               <div class="col-xs-3 col-sm-3 col-md-3">
                 <p style="margin-top:20px;margin-left:30px;">
                   <b>Title*</b>
@@ -47,19 +45,31 @@
               </div>
                 <div class="col-xs-3 col-sm-3 col-md-3">
                 <p style="margin-left:30px;">
-                  <b>Category*</b>
-                </p>
-              </div>
-              <div class="col-xs-9 col-sm-9 col-md-9">
-                <q-item-label v-html="armenu.category" style="margin:0px 30px;" />
-              </div>
-                <div class="col-xs-3 col-sm-3 col-md-3">
-                <p style="margin-left:30px;">
                   <b>Content*</b>
                 </p>
               </div>
               <div class="col-xs-9 col-sm-9 col-md-9">
                 <q-item-label v-html="armenu.content" style="margin:0px 30px;" />
+              </div>
+              <div class="col-xs-3 col-sm-3 col-md-3">
+                <p style="margin-top:20px;margin-left:30px;">
+                  <b>Category*</b>
+                </p>
+              </div>
+              <div class="col-xs-9 col-sm-9 col-md-9">
+                <p style="margin-top:20px;margin-left:30px;">
+                  <i>{{armenu.title}}</i>
+                </p>
+              </div>
+              <div class="col-xs-3 col-sm-3 col-md-3">
+                <p style="margin-top:20px;margin-left:30px;">
+                  <b>Price*</b>
+                </p>
+              </div>
+              <div class="col-xs-9 col-sm-9 col-md-9">
+                <p style="margin-top:20px;margin-left:30px;">
+                  <i>{{armenu.price}} VNĐ</i>
+                </p>
               </div>
               <!-----image--->
               <div class="col-xs-3 col-sm-3 col-md-3">
@@ -68,16 +78,16 @@
                 </p>
               </div>
               <div class="col-xs-9 col-sm-9 col-md-9">
-                <!-- <div v-if="!showPreview" class="text-grey-8 q-gutter-xs border-image">
+                <div v-if="!showPreview" class="text-grey-8 q-gutter-xs">
                   <q-img
-                    :src="baseUrl + '/api/v1/blog/view' + ourskill.img.fileType.split('/').pop().toUpperCase() + '/' + ourskill.img.id"
-                    height="170px"
+                    :src="baseUrl + '/api/v1/menu/view' + armenu.img.fileType.split('/').pop().toUpperCase() + '/' + armenu.img.id"
+                    height="50%"
                     width="40%"
                     style="margin:0px 20px;margin-left:30px;"
                   />
                   <br />
-                </div> -->
-                <div  class="text-grey-8 q-gutter-xs">
+                </div>
+                <div v-if="showPreview" class="text-grey-8 q-gutter-xs">
                   <q-img
                     :src="imagePreview"
                     spinner-color="white"
@@ -101,7 +111,7 @@
                   text-color="primary"
                   label="List"
                   style="margin-right: 5px;padding:0px 10px;"
-                  :to="'/admin/ar-menu'"
+                  :to="'/rem/ar-menu'"
                 />
                 <q-btn
                   class="my-custom-toggle"
@@ -112,7 +122,7 @@
                   color="white"
                   text-color="primary"
                   label="Update"
-                  :to="'/admin/ar-menu/update/' + armenu.id"
+                  :to="'/rem/ar-menu/update/' + armenu.id"
                   style="margin-right: 5px;"
                 />
                 <q-btn
@@ -136,43 +146,56 @@
 </template>
 
 <script>
+import { loadAllArMenu, deleteArMenu } from 'src/services/menu/ArMenu'
 export default {
-  name: 'AdminMenuPage',
+  name: 'AdminArMenuPage',
   data () {
     return {
       tab: 'armenu',
       current: 1,
       maxPage: 5,
-      arimage: {},
-      arimagelist: [
-        {
-          id: '1',
-          title: 'Food 1',
-          category: 'Drink',
-          content: 'this is content',
-          price: '100',
-          createdatetime: '2020-10-16'
-        },
-        {
-          id: '2',
-          title: 'Food 2',
-          category: 'Meet',
-          content: 'this is content',
-          price: '100',
-          createdatetime: '2020-10-16'
-        }
-      ],
-      percent: [],
-      apipercent: [],
+      armenu: {},
+      armenulist: [],
       showPreview: false,
       imagePreview:
         'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSy3-WoUO2VRc4jiy-6QK92fkm4d8ZgtG1nHw&usqp=CAU',
-      baseUrl: process.env.API
+      baseUrl: 'http://localhost:8080'
     }
+  },
+  computed: {
+    deleteArmenuList () {
+      const list = []
+      for (let i = 0; i < this.armenulist.length; i++) {
+        list.push({
+          id: this
+            .armenulist[i]
+            .id,
+          chosen: false
+        })
+      }
+      return list
+    }
+  },
+  created () {
+    loadAllArMenu().then(response => {
+      this.armenulist = response
+        .data
+      for (let i = 0; i < this.armenulist.length; i++) {
+        if (this.$route.params.armenuId === this.armenulist[i].id) {
+          this.armenu = this.armenulist[i]
+          if (this.armenu.img == null) {
+            this.showPreview = true
+          } else {
+            this.showPreview = false
+          }
+          break
+        }
+      }
+    })
   },
   methods: {
     closeTab () {
-      this.$router.push('/admin')
+      this.$router.push('/rem')
     },
     onSubmitDelete () {
       this.$q
@@ -183,34 +206,15 @@ export default {
           cancel: true
         })
         .onOk(() => {
-          // eslint-disable-next-line no-undef
-          deleteServicesOurSkill(this.$route.params.ourskillId).then(response =>
+          deleteArMenu(this.$route.params.armenuId).then(response =>
             this
               .$q
               .notify(
                 { color: 'green-4', textColor: 'white', icon: 'done', timeout: 1000, message: 'Delete Successfully' }
               )
           )
-          this.apipercent.forEach((element, index) => {
-            // eslint-disable-next-line no-undef
-            deleteServicesPercent(this.apipercent[index]).then(response =>
-              this
-                .$q
-                .notify(
-                  { color: 'green-4', textColor: 'white', icon: 'done', timeout: 1000, message: 'Delete Successfully' }
-                )
-            )
-          })
-          location.reload(this.$router.push('/admin/ar-menu/detail'))
+          location.reload(this.$router.push('/rem/ar-menu'))
         })
-    }
-  },
-  created () {
-    for (let i = 0; i < this.arimagelist.length; i++) {
-      if (this.$route.params.armenuId === this.arimagelist[i].id) {
-        this.armenu = this.arimagelist[i]
-        break
-      }
     }
   }
 }
@@ -260,10 +264,5 @@ table {
   border: 2px solid rgb(200, 200, 200);
   margin-top: 50px;
   height: auto;
-}
-.border-image {
-  border: 2px solid rgb(200, 200, 200);
-  width: 60%;
-  margin-left: 20px;
 }
 </style>
