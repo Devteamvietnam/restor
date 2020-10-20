@@ -1,5 +1,5 @@
 <template>
-  <div  class="cus-layout">
+  <div v-if="Object.entries(product).length > 0" class="cus-layout">
     <q-tabs
       v-model="tab"
       dense
@@ -77,16 +77,16 @@
                 </p>
               </div>
               <div class="col-xs-9 col-sm-9 col-md-9">
-                <!-- <div v-if="!showPreview" class="text-grey-8 q-gutter-xs border-image">
+                <div v-if="!showPreview" class="text-grey-8 q-gutter-xs">
                   <q-img
-                    :src="baseUrl + '/api/v1/blog/view' + ourskill.img.fileType.split('/').pop().toUpperCase() + '/' + ourskill.img.id"
+                    :src="baseUrl + '/api/v1/menu/view' + product.img.fileType.split('/').pop().toUpperCase() + '/' + product.img.id"
                     height="170px"
                     width="40%"
                     style="margin:0px 20px;margin-left:30px;"
                   />
                   <br />
-                </div> -->
-                <div  class="text-grey-8 q-gutter-xs">
+                </div>
+                <div v-if="showPreview" class="text-grey-8 q-gutter-xs">
                   <q-img
                     :src="imagePreview"
                     spinner-color="white"
@@ -110,7 +110,7 @@
                   text-color="primary"
                   label="List"
                   style="margin-right: 5px;padding:0px 10px;"
-                  :to="'/admin/product-list'"
+                  :to="'/rem/product-list'"
                 />
                 <q-btn
                   class="my-custom-toggle"
@@ -121,7 +121,7 @@
                   color="white"
                   text-color="primary"
                   label="Update"
-                  :to="'/admin/product-list/update/' + product.id"
+                  :to="'/rem/product-list/update/' + product.id"
                   style="margin-right: 5px;"
                 />
                 <q-btn
@@ -145,6 +145,10 @@
 </template>
 
 <script>
+import {
+  loadAllProduct,
+  deleteProduct
+} from "src/services/menu/product";
 export default {
   name: 'AdminProductPage',
   data () {
@@ -157,35 +161,18 @@ export default {
       current: 1,
       maxPage: 5,
       product: {},
-      productlist: [
-        {
-          id: '1',
-          title: 'Food 1',
-          category: 'Drink',
-          content: 'this is content',
-          price: '100',
-          createdatetime: '2020-10-15'
-        },
-        {
-          id: '2',
-          title: 'Food 2',
-          category: 'Meet',
-          content: 'this is content',
-          price: '100',
-          createdatetime: '2020-10-15'
-        }
-      ],
+      productlist: [],
       percent: [],
       apipercent: [],
       showPreview: false,
       imagePreview:
         'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSy3-WoUO2VRc4jiy-6QK92fkm4d8ZgtG1nHw&usqp=CAU',
-      baseUrl: process.env.API
+      baseUrl: 'http://localhost:8080'
     }
   },
   methods: {
     closeTab () {
-      this.$router.push('/admin')
+      this.$router.push('/rem')
     },
     onSubmitDelete () {
       this.$q
@@ -197,26 +184,28 @@ export default {
         })
         .onOk(() => {
           // eslint-disable-next-line no-undef
-          deleteServicesOurSkill(this.$route.params.ourskillId).then(response =>
+          deleteProduct(this.$route.params.productId).then(response =>
             alert('delete surcess')
           )
-          this.apipercent.forEach((element, index) => {
-            // eslint-disable-next-line no-undef
-            deleteServicesPercent(this.apipercent[index]).then(response =>
-              alert('delete surcess')
-            )
-          })
-          location.reload(this.$router.push('/admin/product-list/detail'))
+          location.reload(this.$router.push('/rem/product-list'))
         })
     }
   },
   created () {
-    for (let i = 0; i < this.productlist.length; i++) {
-      if (this.$route.params.productId === this.productlist[i].id) {
-        this.product = this.productlist[i]
-        break
+    loadAllProduct().then(response => {
+      this.productlist = response.data;
+      for (let i = 0; i < this.productlist.length; i++) {
+        if (this.$route.params.productId === this.productlist[i].id) {
+          this.product = this.productlist[i];
+          if (this.product.img == null) {
+            this.showPreview = true;
+          } else {
+            this.showPreview = false;
+          }
+          break;
+        }
       }
-    }
+    });
   }
 }
 </script>
