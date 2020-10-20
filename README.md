@@ -1,6 +1,6 @@
-# restorang app (restorang)
+# restor (restor
 
-restorang app
+restor
 
 ## Install the dependencies
 ```bash
