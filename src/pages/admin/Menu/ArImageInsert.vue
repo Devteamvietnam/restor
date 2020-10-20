@@ -237,12 +237,14 @@ export default {
       formData.append('data', JSON.stringify(this.arimage))
       formData.append('file', this.uploadPic)
       insertArImage(formData)
-      this
-        .$q
-        .notify(
-          { color: 'green-4', textColor: 'white', icon: 'done', timeout: 2000, message: 'Insert  Successfully' }
-        )
-
+      // eslint-disable-next-line no-unused-vars
+      for (var value of formData.values()) {
+        this
+          .$q
+          .notify(
+            { color: 'green-4', textColor: 'white', icon: 'done', timeout: 2000, message: 'Insert  Successfully' }
+          )
+      }
       location.reload(this.$router.push('/rem/ar-image'))
     },
     cancelCreateArImage () {
