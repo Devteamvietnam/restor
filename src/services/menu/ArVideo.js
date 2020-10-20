@@ -14,7 +14,7 @@ export function insertArVideo (arvideoObject) {
     data: arvideoObject
   })
 }
-// Update
+// Update Arvideo
 export function updateArVideo (arvideoId, formData) {
   return request({
     url: '/api/v1/menu/arvideo/update/' + arvideoId,
