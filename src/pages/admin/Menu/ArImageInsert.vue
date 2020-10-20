@@ -27,7 +27,7 @@
             <b>Arimage > Insert</b>
           </p>
         </div>
-        <!----conten-detail-->
+        <!----content-detail-->
         <div class="boderlist">
           <div class="title-list" style="padding:10px;">
             <b>Arimage - Insert</b>
@@ -36,7 +36,6 @@
           <q-form @submit="onSubmit" class="cus-form" style="margin-top:20px;">
             <div class="row">
               <div  class="offset-sm-1 col-sm-8 col-12 offset-0 row">
-                <!---oursskill-->
                 <p class="col-sm-2 col-12 cus-text">Title*</p>
                 <q-input
                   class="col-sm-10 col-12"
@@ -46,7 +45,6 @@
                   lazy-rules
                   :rules="[ val =>  val !== null && val !== '' || 'Please type a name']"
                 />
-                <!----general-introduction-->
                 <p class="col-sm-2 col-12 cus-text">Content*</p>
                 <q-editor
                   class="col-sm-10 col-12"
@@ -144,7 +142,6 @@
                   </q-list>
                 </div>
               </div>
-              <!----skill percent--->
             </div>
             <!--button save---->
             <div class="text-right" style="margin:20px; width: 70%;">
@@ -248,7 +245,7 @@ export default {
             { color: 'green-4', textColor: 'white', icon: 'done', timeout: 2000, message: 'Insert  Successfully' }
           )
       }
-      location.reload()
+      location.reload(this.$router.push('/rem/ar-image'))
     },
     cancelCreateArImage () {
       this.$q

@@ -40,8 +40,8 @@
                 class="cus-btn"
                 @click="loadpage()"
               />
-              <q-btn class="cus-btn" text-color="black" icon="add" to="/admin/ar-menu/insert" />
-              <q-btn class="cus-btn" text-color="black" icon="delete" @click="deleteArmenu()" />
+              <q-btn class="cus-btn" text-color="black" icon="add" to="/rem/ar-menu/insert" />
+              <q-btn class="cus-btn" text-color="black" icon="delete" @click="deleteAr()" />
             </div>
             <div class="row">
               <q-input outlined dense v-model="ArmenuFilterByTitle" placeholder="Title">
@@ -53,10 +53,13 @@
           </div>
           <q-item v-ripple class="row text-center text-weight-bold q-pa-none q-mt-lg">
             <q-item-section class="col-1 res-col border ml-0">
-              <q-checkbox size="xs" v-model="deleteAllArmenuList" class="q-mx-auto" />
+              <q-checkbox size="xs" v-model="deleteAllArmenu" class="q-mx-auto" />
             </q-item-section>
-            <q-item-section class="col-5 res-update border ml-0">
+            <q-item-section class="col-3 res-update border ml-0">
               <q-item-label class="cursor-pointer">Title</q-item-label>
+            </q-item-section>
+              <q-item-section class="col-2 res-update border ml-0">
+              <q-item-label class="cursor-pointer">Category</q-item-label>
             </q-item-section>
             <q-item-section class="col-3 border ml-0">
               <q-item-label class="cursor-pointer">Reg.Date</q-item-label>
@@ -79,12 +82,15 @@
                 <q-checkbox class="q-mx-auto" size="xs" v-model="armenu.delete" />
               </q-item-section>
               <q-item-section
-                class="col-5 res-update border-row ml-0 text-center q-pl-sm cursor-pointer"
+                class="col-3 res-update border-row ml-0 text-center q-pl-sm cursor-pointer"
               >
                 <q-item-label @click.stop="toArMenuDetail(armenu.id)">{{armenu.title}}</q-item-label>
               </q-item-section>
+              <q-item-section class="col-2 border-row ml-0">
+                <q-item-label>{{armenu.category}}</q-item-label>
+              </q-item-section>
               <q-item-section class="col-3 border-row ml-0">
-                <q-item-label>{{armenu.createdatetime}}</q-item-label>
+                <q-item-label>{{armenu.createdDate}}</q-item-label>
               </q-item-section>
               <q-item-section
                 class="col-3 border-row ml-0"
@@ -95,7 +101,7 @@
                   size="xs"
                   color="primary"
                   label="Update"
-                  :to="'/admin/ar-menu/update/' + armenu.id"
+                  :to="'/rem/ar-menu/update/' + armenu.id"
                 />
               </q-item-section>
             </q-item>
@@ -110,7 +116,7 @@
 </template>
 
 <script>
-// eslint-disable-next-line no-unused-vars
+import { loadAllArMenu, deleteArMenu } from 'src/services/menu/ArMenu'
 import { date } from 'quasar'
 export default {
   name: 'AdminArMenuPage',
@@ -118,27 +124,11 @@ export default {
     return {
       tab: 'armenu',
       ArmenuFilterByTitle: '',
-      deleteAllArmenuList: false,
+      deleteAllArmenu: false,
       current: 1,
-      oldApiArmenuList: [
-        {
-          id: '1',
-          title: 'Food 1',
-          category: 'Drink',
-          content: 'this is content',
-          price: '100',
-          createdatetime: '2020-10-16'
-        },
-        {
-          id: '2',
-          title: 'Food 2',
-          category: 'Meet',
-          content: 'this is content',
-          price: '100',
-          createdatetime: '2020-10-16'
-        }
-      ],
-      apiArmenuList: []
+      oldApiArmenuList: [],
+      apiArmenuList: [],
+      baseUrl: 'http://localhost:8080'
     }
   },
   computed: {
@@ -150,22 +140,22 @@ export default {
       })
     },
     maxPage () {
-      return Math.ceil(this.apiArmenuList.length / 5)
+      return Math.ceil(this.ArmenuList.length / 5)
     },
     pagingArmenu () {
       var startIndex = (this.current - 1) * 5
       var endIndex = this.current * 5 - 1
-      return this.apiArmenuList.slice(startIndex, endIndex + 1)
+      return this.ArmenuList.slice(startIndex, endIndex + 1)
     }
   },
   methods: {
     closeTab () {
-      this.$router.push('/admin')
+      this.$router.push('/rem')
     },
     toArMenuDetail (armenuId) {
-      this.$router.push('/admin/ar-menu/detail/' + armenuId)
+      this.$router.push('/rem/ar-menu/detail/' + armenuId)
     },
-    deleteArmenu () {
+    deleteAr () {
       this.$q
         .dialog({
           title: 'Warning',
@@ -179,6 +169,9 @@ export default {
             if (armenu.delete === true) {
               deleteList.push(armenu.id)
             }
+          })
+          deleteList.forEach((element, index) => {
+            deleteArMenu(deleteList[index])
           })
           location.reload()
         })
@@ -201,13 +194,16 @@ export default {
     }
   },
   created () {
-    this.oldApiArmenuList.forEach(ser => {
-      ser.createdatetime = date.formatDate(
-        new Date(ser.createdatetime),
-        'YYYY-MM-DD HH:mm'
-      )
-      ser = Object.assign({}, ser, { delete: false })
-      this.apiArmenuList.push(ser)
+    loadAllArMenu().then(response => {
+      this.oldApiArmenuList = response.data
+      this.oldApiArmenuList.forEach(ari => {
+        ari.createdDate = date.formatDate(
+          new Date(ari.createdDate),
+          'YYYY-MM-DD HH:mm'
+        )
+        ari = Object.assign({}, ari, { delete: false })
+        this.apiArmenuList.push(ari)
+      })
     })
   }
 }

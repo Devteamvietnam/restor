@@ -10,7 +10,7 @@
       indicator-color="transparent"
       no-caps
     >
-      <q-tab name="arimage" label="Ar-image" icon="pages" class="cus-tab">
+      <q-tab name="arimage" label="Ar-image" icon="camera" class="cus-tab">
         <q-icon
           name="fas fa-times"
           size="10px"
@@ -19,7 +19,6 @@
         />
       </q-tab>
     </q-tabs>
-    <!-- <q-separator /> -->
     <q-tab-panels v-model="tab" animated class="cus-tab-section">
       <q-tab-panel name="arimage">
         <div class="float-right title">
@@ -28,7 +27,7 @@
           </p>
         </div>
         <div class="cus-title-table">
-           <q-icon name="pages" />&nbsp;&nbsp;&nbsp;Arimage- List
+           <q-icon name="camera" />&nbsp;&nbsp;&nbsp;Arimage- List
         </div>
         <div class="cus-container">
           <div class="row flex justify-between res-menu">

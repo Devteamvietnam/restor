@@ -1,5 +1,5 @@
 <template>
-  <div class="cus-layout">
+  <div v-if="Object.entries(armenu).length > 0" class="cus-layout">
     <q-tabs
       v-model="tab"
       dense
@@ -123,20 +123,29 @@
                 <div
                   style="margin-top:20px;"
                 >
-                  <q-list class="col-sm-10 col-12">
-                    <q-item>
-                      <q-item-section>
-                        <q-item>
-                          <q-item-section top>
-                            <div  class="text-grey-8 q-gutter-xs">
-                              <q-img :src="imagePreview" style="height: auto; width: 200px" />
-                              <br />
-                              <input type="file" accept="image/*" @change="uploadImage($event)" />
-                            </div>
-                          </q-item-section>
-                        </q-item>
-                      </q-item-section>
-                    </q-item>
+                            <q-list class="col-sm-10 col-12">
+                      <q-item>
+                         <q-item-section>
+                            <q-item>
+                                <q-item-section top="top">
+                                 <div v-if="!showPreview" class="text-grey-8 q-gutter-xs">
+                                 <q-img
+                                :src="baseUrl + '/api/v1/menu/view' + armenu.img.fileType.split('/').pop().toUpperCase() + '/' + armenu.img.id"
+                                    style="height: auto; max-width: 100px"/>
+                                              <br/>
+                                      <input type="file" accept="image/*" @change="uploadImage($event)"/>
+                                          </div>
+                                      <div v-if="showPreview" class="text-grey-8 q-gutter-xs">
+                                              <q-img
+                                                :src="imagePreview"
+                                                 spinner-color="white"
+                                                  style="height: auto; max-width: 100px"/>
+                                        <input type="file" accept="image/*" @change="uploadImage($event)"/>
+                                        </div>
+                                     </q-item-section>
+                                    </q-item>
+                        </q-item-section>
+                   </q-item>
                   </q-list>
                 </div>
               </div>
@@ -151,7 +160,7 @@
                 toggle-color="primary"
                 color="white"
                 text-color="primary"
-                label="Insert"
+                label="Update"
                 type="submit"
                 style="margin-right: 5px;"
               />
@@ -175,6 +184,7 @@
 </template>
 
 <script>
+import { loadAllArMenu, updateArMenu } from 'src/services/menu/ArMenu'
 import { date } from 'quasar'
 export default {
   name: 'AdminArMenuPage',
@@ -189,31 +199,20 @@ export default {
       uploadPic: null,
       deleteimage: false,
       dirty: true,
-      apiarmenu: [
-        {
-          id: '1',
-          title: 'Food 1',
-          category: 'Drink',
-          content: 'this is content',
-          price: '100',
-          createdatetime: '2020-10-16'
-        },
-        {
-          id: '2',
-          title: 'Food 2',
-          category: 'Meet',
-          content: 'this is content',
-          price: '100',
-          createdatetime: '2020-10-16'
-        }
-      ],
+      armenuList: [],
       armenu: {},
-      baseUrl: process.env.API
+      baseUrl: 'http://localhost:8080'
     }
   },
   methods: {
     closeTab () {
-      this.$router.push('/admin')
+      this.$router.push('/rem')
+    },
+    delimage () {
+      this.showPreview = false
+      this.imagePreview = ''
+      this.uploadPic = null
+      this.dirty = true
     },
     uploadImage (event) {
       this.uploadPic = event.target.files[0]
@@ -236,18 +235,31 @@ export default {
       this.dirty = false
     },
     onSubmit () {
-      if (this.apiarmenu.length < 1) {
+      if (!this.armenu.img || this.armenu.img === '&nbsp;') {
+        this
+          .$q
+          .dialog(
+            { title: 'Warning', message: 'Please Update Image', persistent: true }
+          )
+      } else {
         const formData = new FormData()
-        this.armenu.createdatetime = date.formatDate(
+        this.armenu.createdDate = date.formatDate(
           new Date(),
           'YYYY-MM-DDThh:mm:ss'
         )
         formData.append('data', JSON.stringify(this.armenu))
         formData.append('file', this.uploadPic)
-        // eslint-disable-next-line no-undef
-        insertArMenu(formData)
+        updateArMenu(this.$route.params.armenuId, formData).then(response => {
+          this
+            .$q
+            .notify(
+              { color: 'green-4', textColor: 'white', icon: 'done', timeout: 1000, message: 'Update Successfully' }
+            )
+        })
+        // eslint-disable-next-line no-unused-vars
+        for (var value of formData.values()) {}
       }
-      location.reload()
+      location.reload(this.$router.push('/rem/ar-menu'))
     },
     cancelCreateArMenu () {
       this.$q
@@ -258,17 +270,26 @@ export default {
           cancel: true
         })
         .onOk(() => {
-          this.$router.push('/admin/ar-menu')
+          this.$router.push('/rem/ar-menu')
         })
     }
   },
   created () {
-    for (let i = 0; i < this.apiarmenu.length; i++) {
-      if (this.$route.params.armenuId === this.apiarmenu[i].id) {
-        this.armenu = this.apiarmenu[i]
-        break
+    loadAllArMenu().then(response => {
+      this.armenuList = response
+        .data
+      for (let i = 0; i < this.armenuList.length; i++) {
+        if (this.$route.params.armenuId === this.armenuList[i].id) {
+          this.armenu = this.armenuList[i]
+          if (this.armenu.img == null) {
+            this.showPreview = true
+          } else {
+            this.showPreview = false
+          }
+          break
+        }
       }
-    }
+    })
   }
 }
 </script>
