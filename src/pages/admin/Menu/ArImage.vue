@@ -1,5 +1,5 @@
 <template>
-  <div class="cus-layout">
+  <div  class="cus-layout">
     <q-tabs
       v-model="tab"
       dense
@@ -10,7 +10,7 @@
       indicator-color="transparent"
       no-caps
     >
-      <q-tab name="arimg" label="AR-IMAGE" icon="camera" class="cus-tab">
+      <q-tab name="arimage" label="Ar-image" icon="pages" class="cus-tab">
         <q-icon
           name="fas fa-times"
           size="10px"
@@ -21,14 +21,14 @@
     </q-tabs>
     <!-- <q-separator /> -->
     <q-tab-panels v-model="tab" animated class="cus-tab-section">
-      <q-tab-panel name="arimg">
+      <q-tab-panel name="arimage">
         <div class="float-right title">
           <p>
-            <b>AR-IMAGE</b>
+            <b>Arimage- List</b>
           </p>
         </div>
         <div class="cus-title-table">
-          <q-icon name="camera" />&nbsp;&nbsp;&nbsp;Image - List
+           <q-icon name="pages" />&nbsp;&nbsp;&nbsp;Arimage- List
         </div>
         <div class="cus-container">
           <div class="row flex justify-between res-menu">
@@ -40,20 +40,20 @@
                 class="cus-btn"
                 @click="loadpage()"
               />
-              <q-btn class="cus-btn" text-color="black" icon="add" to="/admin/ar-image/insert" />
-              <q-btn class="cus-btn" text-color="black" icon="delete" @click="deleteArimage()" />
+              <q-btn class="cus-btn" text-color="black" icon="add" to="/rem/ar-image/insert" />
+              <q-btn class="cus-btn" text-color="black" icon="delete" @click="deleteAr()" />
             </div>
             <div class="row">
-              <q-input outlined dense v-model="ArimageFilterByTitle" placeholder="Title">
+              <q-input outlined dense v-model="ArimageFilterByTitle" placeholder="Slider">
                 <template v-slot:append>
                   <q-icon name="search" />
                 </template>
               </q-input>
             </div>
           </div>
-          <q-item v-ripple class="row text-center text-weight-bold q-pa-none q-mt-lg">
+         <q-item v-ripple class="row text-center text-weight-bold q-pa-none q-mt-lg">
             <q-item-section class="col-1 res-col border ml-0">
-              <q-checkbox size="xs" v-model="deleteAllArimageList" class="q-mx-auto" />
+              <q-checkbox size="xs" v-model="deleteAllArimage" class="q-mx-auto" />
             </q-item-section>
             <q-item-section class="col-5 res-update border ml-0">
               <q-item-label class="cursor-pointer">Title</q-item-label>
@@ -75,16 +75,16 @@
               v-ripple
               class="row text-center q-pa-none"
             >
-              <q-item-section class="col-1 res-col border-row ml-0">
+             <q-item-section class="col-1 res-col border-row ml-0">
                 <q-checkbox class="q-mx-auto" size="xs" v-model="arimage.delete" />
               </q-item-section>
               <q-item-section
                 class="col-5 res-update border-row ml-0 text-center q-pl-sm cursor-pointer"
               >
-                <q-item-label @click.stop="toArMenuDetail(arimage.id)">{{arimage.title}}</q-item-label>
+                <q-item-label @click.stop="toArimageDetail(arimage.id)">{{arimage.title}}</q-item-label>
               </q-item-section>
               <q-item-section class="col-3 border-row ml-0">
-                <q-item-label>{{arimage.createDate}}</q-item-label>
+                <q-item-label>{{arimage.createdDate}}</q-item-label>
               </q-item-section>
               <q-item-section
                 class="col-3 border-row ml-0"
@@ -95,7 +95,7 @@
                   size="xs"
                   color="primary"
                   label="Update"
-                  :to="'/admin/ar-image/update/' + arimage.id"
+                  :to="'/rem/ar-image/update/' + arimage.id"
                 />
               </q-item-section>
             </q-item>
@@ -110,45 +110,49 @@
 </template>
 
 <script>
-import { loadAllArImage } from 'src/services/menu/ArImage'
+import {
+  loadAllArImage,
+  deleteArImage
+} from 'src/services/menu/ArImage'
 import { date } from 'quasar'
 export default {
-  name: 'AdminArImagePage',
+  name: 'AdminArimagePage',
   data () {
     return {
-      tab: 'arimg',
+      tab: 'arimage',
       ArimageFilterByTitle: '',
-      deleteAllArimageList: false,
+      deleteAllArimage: false,
       current: 1,
       oldApiArimageList: [],
-      apiArimageList: []
+      apiArimageList: [],
+      baseUrl: 'http://localhost:8080'
     }
   },
   computed: {
     ArimageList () {
-      return this.apiArimageList.filter(Arimage => {
-        return Arimage.title
+      return this.apiArimageList.filter(arimage => {
+        return arimage.title
           .toLowerCase()
           .match(this.ArimageFilterByTitle.toLowerCase())
       })
     },
     maxPage () {
-      return Math.ceil(this.apiArimageList.length / 5)
+      return Math.ceil(this.ArimageList.length / 5)
     },
     pagingArimage () {
       var startIndex = (this.current - 1) * 5
       var endIndex = this.current * 5 - 1
-      return this.apiArimageList.slice(startIndex, endIndex + 1)
+      return this.ArimageList.slice(startIndex, endIndex + 1)
     }
   },
   methods: {
     closeTab () {
       this.$router.push('/rem')
     },
-    toArMenuDetail (arimageId) {
+    toArimageDetail (arimageId) {
       this.$router.push('/rem/ar-image/detail/' + arimageId)
     },
-    deleteArimage () {
+    deleteAr () {
       this.$q
         .dialog({
           title: 'Warning',
@@ -163,6 +167,9 @@ export default {
               deleteList.push(arimage.id)
             }
           })
+          deleteList.forEach((element, index) => {
+            deleteArImage(deleteList[index])
+          })
           location.reload()
         })
     },
@@ -171,7 +178,7 @@ export default {
     }
   },
   watch: {
-    deleteAllArimageList: function (val) {
+    deleteAllArimage: function (val) {
       if (val === true) {
         this.apiArimageList.forEach(arimage => {
           arimage.delete = true
@@ -186,18 +193,14 @@ export default {
   created () {
     loadAllArImage().then(response => {
       this.oldApiArimageList = response.data
-      this.oldApiArimageList.forEach(arimage => {
-        arimage = Object.assign({}, arimage, { delete: false })
-        this.apiArimageList.push(arimage)
+      this.oldApiArimageList.forEach(ari => {
+        ari.createdDate = date.formatDate(
+          new Date(ari.createdDate),
+          'YYYY-MM-DD HH:mm'
+        )
+        ari = Object.assign({}, ari, { delete: false })
+        this.apiArimageList.push(ari)
       })
-    })
-    this.oldApiArimageList.forEach(ser => {
-      ser.createdatetime = date.formatDate(
-        new Date(ser.createdatetime),
-        'YYYY-MM-DD HH:mm'
-      )
-      ser = Object.assign({}, ser, { delete: false })
-      this.apiArimageList.push(ser)
     })
   }
 }

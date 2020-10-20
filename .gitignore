@@ -6,6 +6,7 @@ node_modules
 .quasar
 /dist
 yarn.lock
+debug.log
 .vscode
 # Cordova related directories and files
 /src-cordova/node_modules
