@@ -18,7 +18,7 @@ export function insertProduct(productObj){
 //update product
 export function updateProduct(idupdate, setupdateproduct) {
     return request({
-        url: '/api/v1/menu/updateslider/' + idupdate,
+        url: '/api/v1/menu/updateproduct/' + idupdate,
         method: 'put',
         data: setupdateproduct
     })
