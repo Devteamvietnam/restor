@@ -40,7 +40,7 @@
                                 outlined="outlined"
                                 v-model="arvideo.link"
                                 dense="dense"
-                                placeholder="Link"/>
+                                placeholder="please insert link format: https://www.youtube.com/embed/xxxx"/>
                         </q-item-section>
                     </q-item>
                     <q-item class="row q-mb-md">
