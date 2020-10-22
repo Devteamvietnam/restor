@@ -6,12 +6,10 @@
     margin: auto;
   }
 }
-.img {
-  margin-bottom: 10px;
-}
+
 .divider__r {
     height: 1px;
-    width: 15.33vw;
+    width: 23.33vw;
     margin: 2.8vw 0;
     background: #0f25eb;
     text-align: left;
@@ -33,7 +31,7 @@
   }
 
 
-  .a__nav .contact__item,.modal__head p,.modal__text li,.modal__text p,.modal__text td,.modal__text th,.paragraph__r,.s__partnerships .partners__partner p,.s__rooms .categories__category p,.s__tab li,.s__tab p {
+  .s__partnerships .partners__partner p {
     font-weight: 300;
     font-size: 1.042vw;
     line-height: 1.875vw;
@@ -41,7 +39,7 @@
   }
 
   @media only screen and (max-width:580px) {
-    .a__nav .contact__item,.modal__head p,.modal__text li,.modal__text p,.modal__text td,.modal__text th,.paragraph__r,.s__partnerships .partners__partner p,.s__rooms .categories__category p,.s__tab li,.s__tab p {
+    .paragraph__r,.s__partnerships .partners__partner p{
       font-size: 4vw;
       line-height: 6.4vw;
     }
@@ -144,7 +142,7 @@
   }
 
   .button__r:before {
-    border: 1px solid #038573;
+    border: 1px solid #e7b46c;
   }
 
   @media only screen and (max-width:580px) {
@@ -175,17 +173,17 @@
     }
   }
 
-  .a__menu .s__partnerships .partnerships__heading .menu__button,.a__nav .s__partnerships .partnerships__heading .sub__item,.s__partnerships .partnerships__heading .a__menu .menu__button,.s__partnerships .partnerships__heading .a__nav .sub__item,.s__partnerships .partnerships__heading .chapeau__r,.s__partnerships .partnerships__heading .heading__xxl {
+  .s__partnerships .partnerships__heading  .s__partnerships .partnerships__heading .s__partnerships .partnerships__heading .s__partnerships .partnerships__heading .s__partnerships .partnerships__heading .s__partnerships .partnerships__heading  {
     margin-left: 3.472vw;
   }
 
   @media only screen and (max-width:580px) {
-    .a__menu .s__partnerships .partnerships__heading .menu__button,.a__nav .s__partnerships .partnerships__heading .sub__item,.s__partnerships .partnerships__heading .a__menu .menu__button,.s__partnerships .partnerships__heading .a__nav .sub__item,.s__partnerships .partnerships__heading .chapeau__r,.s__partnerships .partnerships__heading .heading__xxl {
+  .s__partnerships .partnerships__heading  .s__partnerships .partnerships__heading .s__partnerships .partnerships__heading .s__partnerships .partnerships__heading .s__partnerships .partnerships__heading .s__partnerships .partnerships__heading  {
       margin-left: 0;
     }
   }
 
-  .a__menu .s__partnerships .partnerships__heading .menu__button,.a__nav .s__partnerships .partnerships__heading .sub__item,.s__partnerships .partnerships__heading .a__menu .menu__button,.s__partnerships .partnerships__heading .a__nav .sub__item,.s__partnerships .partnerships__heading .chapeau__r {
+  .a__menu .s__partnerships .partnerships__heading  .s__partnerships .partnerships__heading ,.s__partnerships .partnerships__heading .s__partnerships .partnerships__heading .s__partnerships .partnerships__heading  {
     margin-bottom: 4.167vw;
   }
 
@@ -204,12 +202,13 @@
     }
   }
 
-  .modal__text .s__partnerships .partners__partner h2,.s__partnerships .partners__partner .heading__l,.s__partnerships .partners__partner .modal__text h2 {
-    margin-left: 1.389vw;
+   .s__partnerships .partners__partner h2,.s__partnerships .partners__partner .heading__l,.s__partnerships .partners__partner  h2 {
+    margin-left: 0.389vw;
+    margin-top: 1.5vw;
   }
 
   @media only screen and (max-width:580px) {
-    .modal__text .s__partnerships .partners__partner h2,.s__partnerships .partners__partner .heading__l,.s__partnerships .partners__partner .modal__text h2 {
+     .s__partnerships .partners__partner h2,.s__partnerships .partners__partner .heading__l,.s__partnerships .partners__partner h2 {
       margin-left: unset;
     }
   }
@@ -226,7 +225,7 @@
 
   .s__partnerships .partners__partner .button__r {
     display: block;
-    margin: 2.8vw 0 0;
+    margin: 1.8vw 0 0;
   }
 
   @media only screen and (max-width:580px) {
